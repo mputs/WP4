@@ -18,7 +18,7 @@ Assuming sbt is installed, one can compile this by typing:
 at the command line.
 
 This program reads a filename from the command line. For instance, if you like to count the number of records for december 2015, type:  
-> `spark-submit --class "AIStest" target/scala-2.10/ais-test_2.10-0.1.jar /datasets/AIS/Locations/20151231*.csv.gz`  
+> `spark-submit --class "AIStest" target/scala-2.10/ais-test_2.10-0.1.jar datasets/AIS/Locations/20151231*.csv.gz`  
 
 at the command line.
 
