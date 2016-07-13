@@ -114,13 +114,3 @@ class LatLonGrid(nw: Location, se: Location) {
 
 
 
-var nw = new Location(72.366904, -30.366904)
-var se = new Location(21.854758, 62.174983)
-var grid = new LatLonGrid(nw, se);
-var mid = (nw + se)/2;
-
-val idxlat = grid.getlatidx(mid(1))
-val idxlon = grid.getlonidx(mid(0));
-
-val bounds = getbounds(idxlat, idxlon)
- 
