@@ -57,7 +57,7 @@ class LatLonGrid(nw: Location, se: Location, cellsize: Double) {
 	}
 
 
-	var dl = 10/(Rphi(mid(0))*math.cos(mid(0)*math.Pi/180)*math.Pi/180)
+	var dl = math.sqrt(cellsize)/(Rphi(mid(0))*math.cos(mid(0)*math.Pi/180)*math.Pi/180)
 	var f = List(mid(0));
 
 	var flast = mid(0);

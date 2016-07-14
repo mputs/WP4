@@ -8,8 +8,14 @@ object countuniq
 {
 	val nw = new Location(72.366904, -30.366904)
 	val se = new Location(21.854758, 62.174983)
-	val grid = new LatLonGrid(nw, se, 100);
+//	val grid = new LatLonGrid(nw, se, 100);
 
+	def parsetimestamp(x: String):String = 
+	{
+		val dt = x.split(" ");
+		val t = dt(1).split(":");
+		return dt(0) + ","+t(0);
+	}
 
 	def main(args: Array[String])
 	{
@@ -18,26 +24,37 @@ object countuniq
 		val outputfile = hdfsprefix + args(1)
 
 		val conf = new SparkConf()
-		conf.setAppName("AIS-frame")
+		conf.setAppName("countcells")
 		conf.setMaster("yarn-client")
 		val sc = new SparkContext(conf)
-		val bcGrid = sc.broadcast(grid)
 
 		val data = sc.textFile(tfiles)
 			.map(_.split(","))
 			.filter(x=> x(0)!="mmsi")
+		val q = data.mapPartitions{it =>
+				val grid = new LatLonGrid(nw,se,10000);
+				it.map(x=>grid.getlonidx(x(1).toDouble)+","+grid.getlatidx(x(2).toDouble)+","+parsetimestamp(x(8))+";"+x(0))
+			}
+			.distinct()
+			.map(_.split(","))
+			.filter(x=>x(0)!="-1" && x(1)!="-1")
+			.map(_.mkString(","))
+			.map(x=>(x.split(";")(0),1))
+			.reduceByKey(_+_)
+			.map(x=>x._1+","+x._2)
+		println (">>>>>>> count is "+q.count() + "<<<<<<<")
+
+		q.saveAsTextFile(outputfile);
+		
+		sc.stop()
+	}
+}
+
+/*
 		val keys = data.map(x => bcGrid.value.getlonidx(x(1).toDouble)+","+bcGrid.value.getlatidx(x(2).toDouble)+","+mmsi)
 			.distinct()
 			.map(_split(","))
 			.filter(x=>x(0)!="-1" && x(1)!="-1")
 			.map(x=>(x(0)+","+x(1), 1))
 			.reduceByKey((x,y)=>x+y)
-
-	
-			
-		
-		imos.saveAsTextFile(outputfile);
-		
-		sc.stop()
-	}
-}
+*/
