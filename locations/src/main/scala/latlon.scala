@@ -1,3 +1,5 @@
+//package latlon
+
 import java.lang.Math._
 
 class Location(lattitude: Double, longitude: Double) {
