@@ -41,8 +41,9 @@ class Location(lattitude: Double, longitude: Double) {
 	
 }
 
-class LatLonGrid(nw: Location, se: Location) {
+class LatLonGrid(nw: Location, se: Location, cellsize: Double) {
 	var mid = (nw + se) / 2
+
 
 	var radius = new Array[Double](2)
 	radius(0) = 6378.1; radius(1)= 6356.8
@@ -54,13 +55,13 @@ class LatLonGrid(nw: Location, se: Location) {
 	}
 
 
-	var dl = 10/(Rphi(mid(0))*cos(mid(0)*PI/180)*PI/180)
+	var dl = sqrt(cellsize)/(Rphi(mid(0))*cos(mid(0)*PI/180)*PI/180)
 	var f = List(mid(0));
 
 	var flast = mid(0);
 	while (flast > se(0) )
 	{
-		var df = 100*(pow(180,2))/(pow(Rphi(flast),2) * cos(flast*PI/180) * dl * pow(PI,2));
+		var df = cellsize*(pow(180,2))/(pow(Rphi(flast),2) * cos(flast*PI/180) * dl * pow(PI,2));
 		flast = flast - df
 		f = List(flast):::f
 		
@@ -71,7 +72,7 @@ class LatLonGrid(nw: Location, se: Location) {
 	while (flast < nw(0) )
 	{
 		
-		var df = 100*(pow(180,2))/(pow(Rphi(flast),2) * cos(flast*PI/180) * dl * pow(PI,2));
+		var df = cellsize*(pow(180,2))/(pow(Rphi(flast),2) * cos(flast*PI/180) * dl * pow(PI,2));
 		flast = flast + df
 		f = f:::List(flast)
 	}
@@ -81,23 +82,31 @@ class LatLonGrid(nw: Location, se: Location) {
 	var westbound = mid(1)+dl*((nw(1) - mid(1))/dl).toInt
 	var latlen = ((se(1)-nw(1))/dl).toInt;
 
-	def getlonidx(lon: Double): Integer = 
+	def getlonidx(lon: Double): Int = 
 	{
-		return ((f.take(f.length-1) zip f.takeRight(f.length-1) zip (0 to f.length-1)).filter{case((a,b),idx)=>(a<=lon && b>lon)})(0)._2
+		if (lon >= southbound & lon <=northbound)
+			return ((f.take(f.length-1) zip f.takeRight(f.length-1) zip (0 to f.length-1)).filter{case((a,b),idx)=>(a<=lon && b>lon)})(0)._2
+		else
+			return -1;
 	}
-	def getlatidx(lat: Double): Integer = 
+	def getlatidx(lat: Double): Int = 
 	{
-		var idx = ((lat-westbound)/dl).toInt
-		if (idx <= latlen )
+		if (lat >= westbound && lat <=eastbound)
 		{
-			return idx
+			var idx = ((lat-westbound)/dl).toInt
+			if (idx <= latlen )
+			{
+				return idx
+				}
+			else
+			{
+				return -1
+			}
 		}
 		else
-		{
 			return -1
-		}
 	}
-	def getbounds(idxlat: Integer, idxlon: Integer): (Location, Location) = 
+	def getbounds(idxlat: Int, idxlon: Int): (Location, Location) = 
 	{
 		val lat1 = westbound+dl*idxlat;
 		val lat2 = lat1 + dl;
