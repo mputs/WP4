@@ -1,6 +1,6 @@
-//package latlon
+package latlon
 
-import java.lang.Math._
+import math._
 
 class Location(lattitude: Double, longitude: Double) {
 	val lat = lattitude;
@@ -57,13 +57,13 @@ class LatLonGrid(nw: Location, se: Location, cellsize: Double) {
 	}
 
 
-	var dl = sqrt(cellsize)/(Rphi(mid(0))*cos(mid(0)*PI/180)*PI/180)
+	var dl = 10/(Rphi(mid(0))*math.cos(mid(0)*math.Pi/180)*math.Pi/180)
 	var f = List(mid(0));
 
 	var flast = mid(0);
 	while (flast > se(0) )
 	{
-		var df = cellsize*(pow(180,2))/(pow(Rphi(flast),2) * cos(flast*PI/180) * dl * pow(PI,2));
+		var df = cellsize*(math.pow(180,2))/(math.pow(Rphi(flast),2) * math.cos(flast*math.Pi/180) * dl * math.pow(math.Pi,2));
 		flast = flast - df
 		f = List(flast):::f
 		
@@ -74,7 +74,7 @@ class LatLonGrid(nw: Location, se: Location, cellsize: Double) {
 	while (flast < nw(0) )
 	{
 		
-		var df = cellsize*(pow(180,2))/(pow(Rphi(flast),2) * cos(flast*PI/180) * dl * pow(PI,2));
+		var df = cellsize*(math.pow(180,2))/(math.pow(Rphi(flast),2) * math.cos(flast*math.Pi/180) * dl * math.pow(math.Pi,2));
 		flast = flast + df
 		f = f:::List(flast)
 	}
