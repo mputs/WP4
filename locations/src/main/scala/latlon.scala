@@ -82,21 +82,21 @@ class LatLonGrid(nw: Location, se: Location, cellsize: Double) {
 
 	var eastbound = se(1)+dl*((mid(1) - se(1))/dl).toInt
 	var westbound = mid(1)+dl*((nw(1) - mid(1))/dl).toInt
-	var latlen = ((se(1)-nw(1))/dl).toInt;
+	var lonlen = ((se(1)-nw(1))/dl).toInt;
 
-	def getlonidx(lon: Double): Int = 
+	def getlatidx(lat: Double): Int = 
 	{
-		if (lon >= southbound & lon <=northbound)
-			return ((f.take(f.length-1) zip f.takeRight(f.length-1) zip (0 to f.length-1)).filter{case((a,b),idx)=>(a<=lon && b>lon)})(0)._2
+		if (lat >= southbound & lat <=northbound)
+			return ((f.take(f.length-1) zip f.takeRight(f.length-1) zip (0 to f.length-1)).filter{case((a,b),idx)=>(a<=lat && b>lat)})(0)._2
 		else
 			return -1;
 	}
-	def getlatidx(lat: Double): Int = 
+	def getlonidx(lon: Double): Int = 
 	{
-		if (lat >= westbound && lat <=eastbound)
+		if (lon >= westbound && lon <=eastbound)
 		{
-			var idx = ((lat-westbound)/dl).toInt
-			if (idx <= latlen )
+			var idx = ((lon-westbound)/dl).toInt
+			if (idx <= lonlen )
 			{
 				return idx
 				}
