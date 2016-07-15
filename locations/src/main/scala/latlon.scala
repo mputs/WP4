@@ -117,6 +117,11 @@ class LatLonGrid(nw: Location, se: Location, cellsize: Double) {
 		return (new Location(lat1, lon1), new Location(lat2,lon2));
 		 
 	}
+	def getcenter(idxlat: Int, idxlon: Int): Location = 
+	{
+		val x = getbounds(idxlat, idxlon);
+		return (x._1 + x._2)/2
+	}
 
 	override def toString(): String = "[("+ westbound + ", " + northbound + "), (" + eastbound + ", " + southbound + ")]\n" + ((se(1)-nw(1))/dl).toInt + "x" + f.length + " cells.";
 
