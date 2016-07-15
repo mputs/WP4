@@ -110,10 +110,10 @@ class LatLonGrid(nw: Location, se: Location, cellsize: Double) {
 	}
 	def getbounds(idxlat: Int, idxlon: Int): (Location, Location) = 
 	{
-		val lat1 = westbound+dl*idxlat;
-		val lat2 = lat1 + dl;
-		val lon1 = f(idxlon);
-		val lon2 = f(idxlon+1);
+		val lon1 = westbound+dl*idxlon;
+		val lon2 = lon1 + dl;
+		val lat1 = f(idxlat);
+		val lat2 = f(idxlat+1);
 		return (new Location(lat1, lon1), new Location(lat2,lon2));
 		 
 	}
