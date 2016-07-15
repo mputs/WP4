@@ -4,6 +4,7 @@ import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
 import latlon._
 
+// mmsi,lon,lat,accuracy,speed,course,rotation,status,timestamp
 object countuniq
 {
 	val nw = new Location(72.366904, -30.366904)
