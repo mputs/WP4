@@ -34,7 +34,7 @@ object countuniq
 			.filter(x=> x(0)!="mmsi")
 		val q = data.mapPartitions{it =>
 				val grid = new LatLonGrid(nw,se,10000);
-				it.map(x=>grid.getlonidx(x(1).toDouble)+","+grid.getlatidx(x(2).toDouble)+","+parsetimestamp(x(8))+";"+x(0))
+				it.map(x=>grid.getlatidx(x(2).toDouble)+","+grid.getlonidx(x(1).toDouble)+","+parsetimestamp(x(8))+";"+x(0))
 			}
 			.distinct()
 			.map(_.split(","))
