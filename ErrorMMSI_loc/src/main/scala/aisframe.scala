@@ -29,6 +29,9 @@ object AISframe
 		val tfiles = hdfsprefix + args(0)
 		val outputfile = hdfsprefix + args(1)
 
+		val locdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/2015110200*.csv.gz"
+
+
 		val conf = new SparkConf()
 		conf.setAppName("AIS-frame")
 		conf.setMaster("yarn-client")
@@ -36,9 +39,18 @@ object AISframe
 
 		val data = sc.textFile(tfiles)
 			.map(_.split(","))
-			.filter(x=> x(0)!="mmsi")
+			.filter(x=> x(2)=="1")
+		
+		val locdata = sc.textFile(locdatafile)
+			.map(_.split(","))
+			.filter(x=> x(0)=="mmsi")
 
-		val imommsi = data.map(x => Array(x(0),x(1)));
+
+		val single_mmsi = data.map(x => Array(x(0), x(2)));
+		val alldata = locdata ++ single_mmsi;
+		val result = alldata.filterByKey(x => "1" in x);
+
+
         val koppel = imommsi.map(z => (z.mkString(","), 1)).reduceByKey(_+_);
         val koppel2 = koppel.map(b => b._1.split(",")++Array(b._2)).map(c=>(c(0),c.slice(1,3)));
         val max_mmsi = koppel2.reduceByKey((b, c)=> if(b(1).toString.toInt>c(1).toString.toInt) b else c).cache;
