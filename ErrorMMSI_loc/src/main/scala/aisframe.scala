@@ -25,10 +25,11 @@ object AISframe
         
 	def main(args: Array[String])
 	{
-		val hdfsprefix = "hdfs://namenode.ib.sandbox.ichec.ie:8020/" 
-		val tfiles = hdfsprefix + args(0)
-		val outputfile = hdfsprefix + args(1)
-
+		//val hdfsprefix = "hdfs://namenode.ib.sandbox.ichec.ie:8020/" 
+		//val tfiles = hdfsprefix + args(0)
+		//val outputfile = hdfsprefix + args(1)
+		
+		val tfiles = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/defframe.csv"
 		val locdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/2015110200*.csv.gz"
 
 
@@ -39,15 +40,19 @@ object AISframe
 
 		val data = sc.textFile(tfiles)
 			.map(_.split(","))
-			.filter(x=> x(2)=="1")
+			.filter(x => x(2)=="1")
 		
 		val locdata = sc.textFile(locdatafile)
 			.map(_.split(","))
-			.filter(x=> x(0)=="mmsi")
+			.filter(x=> x(0)!="mmsi")
 
 
 		val single_mmsi = data.map(x => Array(x(0), x(2)));
-		val alldata = locdata ++ single_mmsi;
+		val loc_orig = locdata.map(x => Array(x(0), x(1), x(2)));
+					   
+		val couples = loc_orig.join(single_mmsi);
+					   
+		val alldata = loc_orig ++ single_mmsi;
 		val result = alldata.filterByKey(x => "1" in x);
 
 
