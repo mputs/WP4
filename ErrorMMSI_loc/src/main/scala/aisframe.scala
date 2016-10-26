@@ -50,7 +50,7 @@ object AISframe
 		val single_mmsi = data.map(x => Array(x(0), x(2)));
 		val loc_orig = locdata.map(x => Array(x(0), x(1), x(2)));
 					   
-		val couples = loc_orig.join(single_mmsi);
+		val couples = loc_orig.map.join(single_mmsi.map);
 					   
 		val alldata = loc_orig ++ single_mmsi;
 		val result = alldata.filterByKey(x => "1" in x);
