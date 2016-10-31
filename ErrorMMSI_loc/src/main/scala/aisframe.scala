@@ -31,6 +31,7 @@ object AISframe
 		
 		val tfiles = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/defframe.csv"
 		val locdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/2015110200*.csv.gz"
+		val outputfile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/faultylocs.csv"
 
 
 		val conf = new SparkConf()
@@ -47,24 +48,25 @@ object AISframe
 			.filter(x=> x(0)!="mmsi")
 
 
-		val single_mmsi = data.map(x => Array(x(0), x(2)));
-		val loc_orig = locdata.map(x => Array(x(0), x(1), x(2)));
+		val single_mmsi = data.map(x => (x(0), x(2).mkString(",")))
+		val loc_orig = locdata.map(x => (x(0), Array(x(0), x(1), x(2)).mkString(",")))
 					   
-		val couples = loc_orig.map.join(single_mmsi.map);
+		val couples = loc_orig.join(single_mmsi);
 					   
-		val alldata = loc_orig ++ single_mmsi;
-		val result = alldata.filterByKey(x => "1" in x);
+		//val alldata = loc_orig ++ single_mmsi;
+		//val result = alldata.filterByKey(x => "1" in x);
 
 
-        val koppel = imommsi.map(z => (z.mkString(","), 1)).reduceByKey(_+_);
-        val koppel2 = koppel.map(b => b._1.split(",")++Array(b._2)).map(c=>(c(0),c.slice(1,3)));
-        val max_mmsi = koppel2.reduceByKey((b, c)=> if(b(1).toString.toInt>c(1).toString.toInt) b else c).cache;
+        //val koppel = imommsi.map(z => (z.mkString(","), 1)).reduceByKey(_+_);
+        //val koppel2 = koppel.map(b => b._1.split(",")++Array(b._2)).map(c=>(c(0),c.slice(1,3)));
+        //val max_mmsi = koppel2.reduceByKey((b, c)=> if(b(1).toString.toInt>c(1).toString.toInt) b else c).cache;
 
         //val aantalmmsi = max_mmsi.map(z => (z._1.toString.toInt,1)).reduceByKey(_+_).filter(x=>x._2 > 1).cache;
         //aantalmmsi.map(a=> Array(a._1,a._2).mkString(",")).saveAsTextFile(outputfile);
         //println ("dubbele mmsi = " + aantalmmsi.count);
-        val filt_max_mmsi = max_mmsi.filter(y=>checkimo(y._2(0).toString));
-        filt_max_mmsi.map(a=> Array(a._1,a._2.mkString(",")).mkString(",")).saveAsTextFile(outputfile);
+        //val filt_max_mmsi = max_mmsi.filter(y=>checkimo(y._2(0).toString));
+        couples.map(a=> a._2._1).saveAsTextFile(outputfile);
+
 		sc.stop()
 	}
 }
