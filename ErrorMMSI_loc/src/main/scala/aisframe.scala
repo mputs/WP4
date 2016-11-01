@@ -12,7 +12,7 @@ object AISframe
 		if(imo.length!=7)
 			return false;
 		val x = imo.map(_.toInt-'0'.toInt); 
-		if (((7 to 2 by -1 zip x.dropRight(1)).map{case(a,b)=>a*b}.sum-x(6))%10==0)
+		if (((7 to 2 by -1 zip x.dropRight(1)).map{case(a,b)=>a*b}.sum-x(6))%10=
 			return true;
 		return false	
 	}
@@ -31,7 +31,7 @@ object AISframe
 		//val outputfile = hdfsprefix + args(1)
 		
 		val tfiles = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/defframe.csv"
-		val locdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/2015110200*.csv.gz"
+		val locdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/201510*.csv.gz"
 		val outputfile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/faultylocs.csv"
 
 
