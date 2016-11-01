@@ -4,6 +4,7 @@ import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
 
 //comments here
+//another one
 object AISframe
 {
 	def checkimo(imo: String): Boolean =
