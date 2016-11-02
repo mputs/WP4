@@ -7,22 +7,22 @@ import org.apache.spark.SparkConf
 //another one
 object AISframe
 {
-	def checkimo(imo: String): Boolean =
-	{
-		if(imo.length!=7)
-			return false;
-		val x = imo.map(_.toInt-'0'.toInt); 
-		if (((7 to 2 by -1 zip x.dropRight(1)).map{case(a,b)=>a*b}.sum-x(6))%10=
-			return true;
-		return false	
-	}
+	//def checkimo(imo: String): Boolean =
+	//{
+	//	if(imo.length!=7)
+	//		return false;
+	//	val x = imo.map(_.toInt-'0'.toInt); 
+	//	if (((7 to 2 by -1 zip x.dropRight(1)).map{case(a,b)=>a*b}.sum-x(6))%10=
+	//		return true;
+	//	return false	
+	//}
     
-    def checkmmsi(mmsi: String): Boolean = 
-    {
-        if(mmsi.length!=9)
-            return false;
-        return true
-    }   
+    //def checkmmsi(mmsi: String): Boolean = 
+    //{
+      //  if(mmsi.length!=9)
+      //     return false;
+      //  return true
+    //}   
         
 	def main(args: Array[String])
 	{
