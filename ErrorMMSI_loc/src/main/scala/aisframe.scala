@@ -44,7 +44,7 @@ object AISframe
 			.filter(x => x(2)=="1")
 		
 		val locdata = sc.textFile(locdatafile)
-			.map(_.split(","))
+			.map(_.split(",")).map("%.3g" format _)
 			.filter(x=> x(0)!="mmsi")
 
 
