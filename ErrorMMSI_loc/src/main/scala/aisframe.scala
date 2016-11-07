@@ -24,14 +24,14 @@ object AISframe
         
 	def main(args: Array[String])
 	{
-		//val hdfsprefix = "hdfs://namenode.ib.sandbox.ichec.ie:8020/" 
-		//val tfiles = hdfsprefix + args(0)
-		//val locdatafile = hdfsprefix + args(1)
-		//val outputfile = hdfsprefix + args(2)
+		val hdfsprefix = "hdfs://namenode.ib.sandbox.ichec.ie:8020/" 
+		val tfiles = hdfsprefix + args(0)
+		val locdatafile = hdfsprefix + args(1)
+		val outputfile = hdfsprefix + args(2)
 		
-		val tfiles = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/defframe6all.csv"
-		val locdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/2015120100*.csv.gz"
-		val outputfile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/AMS1.csv"
+		//val tfiles = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/defframe6all.csv"
+		//val locdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/2015120100*.csv.gz"
+		//val outputfile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/AMS1.csv"
 
 
 		val conf = new SparkConf()
