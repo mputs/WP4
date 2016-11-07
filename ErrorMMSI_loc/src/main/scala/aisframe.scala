@@ -49,7 +49,7 @@ object AISframe
 		val locdata = sc.textFile(locdatafile).map(_.split(",")).filter(x=> x(0)!="mmsi" && x(1).toDouble>=4.7298 && x(1).toDouble<=4.8814  && x(2).toDouble>=52.3878  && x(2).toDouble<=52.4406 )
 
 
-		val single_mmsi = data.map(x => (x(0), x(2).mkString(",")))
+		val single_mmsi = data.map(x => (x(0), Array(x(1), x(2)).mkString(",")))
 		val loc_orig = locdata.map(x => (x(0), Array(x(0), x(1), x(2), x(8)).mkString(",")))
 		
 					   
