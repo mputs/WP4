@@ -29,9 +29,9 @@ object AISframe
 		//val tfiles = hdfsprefix + args(0)
 		//val outputfile = hdfsprefix + args(1)
 		
-		val tfiles = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/defframe.csv"
-		val locdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/2015110200*.csv.gz"
-		val outputfile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/faultylocs.csv"
+		val tfiles = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/defframe6all.csv"
+		val locdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/20151101*.csv.gz"
+		val outputfile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/AMS_1dec.csv"
 
 
 		val conf = new SparkConf()
@@ -41,11 +41,12 @@ object AISframe
 
 		val data = sc.textFile(tfiles)
 			.map(_.split(","))
-			.filter(x => x(2)=="1")
+		//	.filter(x => x(2)=="1")
 		
-		val locdata = sc.textFile(locdatafile)
-			.map(_.split(","))
-			.filter(x=> x(0)!="mmsi")
+		//val locdata = sc.textFile(locdatafile)
+		//		.map(_.split(","))
+		//	.filter(x=> x(0)!="mmsi")
+		val locdata = sc.textFile(locdatafile).map(_.split(",")).filter(x=> x(0)!="mmsi" && x(1).toDouble>=4.7298 && x(1).toDouble<=4.8814  && x(2).toDouble>=52.3878  && x(2).toDouble<=52.4406 )
 
 
 		val single_mmsi = data.map(x => (x(0), x(2).mkString(",")))
