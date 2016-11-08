@@ -5,23 +5,8 @@ import org.apache.spark.SparkConf
 
 object AISframe
 {
-	//def checkimo(imo: String): Boolean =
-	//{
-	//	if(imo.length!=7)
-	//		return false;
-	//	val x = imo.map(_.toInt-'0'.toInt); 
-	//	if (((7 to 2 by -1 zip x.dropRight(1)).map{case(a,b)=>a*b}.sum-x(6))%10=
-	//		return true;
-	//	return false	
-	//}
-    
-    //def checkmmsi(mmsi: String): Boolean = 
-    //{
-      //  if(mmsi.length!=9)
-        //    return false;
-        //return true
-    //}   
-        
+ 	   
+
 	def main(args: Array[String])
 	{
 		val hdfsprefix = "hdfs://namenode.ib.sandbox.ichec.ie:8020/" 
@@ -43,17 +28,20 @@ object AISframe
 			.map(_.split(","))
 			//.filter(x => x(2)=="1")
 		
-		//val locdata = sc.textFile(locdatafile)
-		//	.map(_.split(",")).map("%.3g" format _)
+		val locdata = sc.textFile(locdatafile)
+			.map(_.split(",")).map("%.3g" format _)
 		//	.filter(x=> x(0)!="mmsi")
-		val locdata = sc.textFile(locdatafile).map(_.split(",")).filter(x=> x(0)!="mmsi" && x(1).toDouble>=4.7298 && x(1).toDouble<=4.8814  && x(2).toDouble>=52.3878  && x(2).toDouble<=52.4406 )
+		//val locdata = sc.textFile(locdatafile).map(_.split(",")).filter(x=> x(0)!="mmsi" && x(1).toDouble>=4.7298 && x(1).toDouble<=4.8814  && x(2).toDouble>=52.3878  && x(2).toDouble<=52.4406 )
 
 
 		val single_mmsi = data.map(x => (x(0), Array(x(1), x(2)).mkString(",")))
-		val loc_orig = locdata.map(x => (x(0), Array(x(0), x(1), x(2), x(8)).mkString(",")))
-		
+		val loc_orig = locdata.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
+		//val loc_orig = locdata.map(x => (x(0), Array(x(0), x(8)., x(1), x(2), x(4)).mkString(",")))
 					   
 		val couples = loc_orig.join(single_mmsi);
+		//val ship = 
+		
+
 					   
 		//val alldata = loc_orig ++ single_mmsi;
 		//val result = alldata.filterByKey(x => "1" in x);
@@ -67,7 +55,7 @@ object AISframe
         //aantalmmsi.map(a=> Array(a._1,a._2).mkString(",")).saveAsTextFile(outputfile);
         //println ("dubbele mmsi = " + aantalmmsi.count);
         //val filt_max_mmsi = max_mmsi.filter(y=>checkimo(y._2(0).toString));
-        couples.map(a=> a._2._1).saveAsTextFile(outputfile);
+        couples.map(a=> a._2).saveAsTextFile(outputfile);
 
 		sc.stop()
 	}
