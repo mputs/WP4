@@ -53,7 +53,7 @@ object AISframe
 				       val df = new SimpleDateFormat("yyyy-MM-dd HH:mmXXX");
 				       it.map(x=>x++Array(findHarbour(x(1).toDouble,x(2).toDouble),df.parse(x(8)).getTime))
 			}
-			
+		//"2015-12-02 04:00:00.003"	
 
 		locdata.map(a=> a.mkString(",")).saveAsTextFile(outputfile);
 			     
