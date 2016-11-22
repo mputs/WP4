@@ -58,7 +58,7 @@ object AISframe
 			     
 		
 		val shipframe = data.map(x => (x(0), Array(x(1), x(2)).mkString(",")))
-		val ship_orig = locdata.map(x=>(x(0), Array(x(1),x(2),x(4),x(8),x(9),x(10))))
+		val ship_orig = locdata.map(x=>(x(0), Array(x(1).toString,x(2).toString,x(4).toString,x(8).toString,x(9).toString,x(10).toString)))
 			.groupByKey()
 			.map(x=>(x._1,x._2.toList.sortWith((a,b)=>a(5).toLong<b(5).toLong)))
 
