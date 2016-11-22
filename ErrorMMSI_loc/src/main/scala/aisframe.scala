@@ -2,6 +2,9 @@
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
+import java.sql.Timestamp;
+import java.text.*;
+import java.util.Date;
 
 object AISframe
 {
@@ -46,7 +49,9 @@ object AISframe
 		
 		val locdata = sc.textFile(locdatafile).map(_.split(","))
 			.filter(x=> x(0)!="mmsi")
-			.map(x=>x++Array(findHarbour(x(1).toDouble,x(2).toDouble),parse(x(8).toEpochMilli))) 
+			.mapPartitions(it => 
+				       val df = new SimpleDateFormat("yyyy-MM-dd'T'HH:mmXXX")
+				       it.map(x=>x++Array(findHarbour(x(1).toDouble,x(2).toDouble),df.parse(x(8)).getTime))) 
 			
 
 		locdata.map(a=> a.mkString(",")).saveAsTextFile(outputfile);
