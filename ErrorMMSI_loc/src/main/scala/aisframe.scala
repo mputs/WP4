@@ -46,9 +46,10 @@ object AISframe
 		
 		val locdata = sc.textFile(locdatafile).map(_.split(","))
 			.filter(x=> x(0)!="mmsi")
-			.map(x=>x++Array(findHarbour(x(1).toDouble,x(2).toDouble))) 
+			.map(x=>x++Array(findHarbour(x(1).toDouble,x(2).toDouble),parse(x(8).toEpochMilli))) 
+			
 
-		//locdata.map(a=> a.mkString(",")).saveAsTextFile(outputfile);
+		locdata.map(a=> a.mkString(",")).saveAsTextFile(outputfile);
 			     
 		
 		val shipframe = data.map(x => (x(0), Array(x(1), x(2)).mkString(",")))
