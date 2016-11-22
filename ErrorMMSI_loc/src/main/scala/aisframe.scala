@@ -3,7 +3,7 @@ import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
 import java.sql.Timestamp;
-import java.text.*;
+import java.text._;
 import java.util.Date;
 
 object AISframe
