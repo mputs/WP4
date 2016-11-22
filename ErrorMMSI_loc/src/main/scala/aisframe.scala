@@ -29,7 +29,7 @@ object AISframe
 			.map(_.split(","))
 			//.filter(x => x(2)=="1")
 		
-		val LocHarb = io.Source.fromFile("ports_locations.csv").getLines.toArray.map(_.split(","))
+		val LocHarb = io.Source.fromFile("ports_locations.csv").getLines.map(_.split(",")).toArray
 		val brLocHarb = sc.broadcast(LocHarb)
 		
 		
