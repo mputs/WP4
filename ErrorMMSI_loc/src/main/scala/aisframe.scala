@@ -47,7 +47,7 @@ object AISframe
 			.filter(x=> x(0)!="mmsi")
 			.map(x=>x++Array(findHarbour(x(1).toDouble,x(2).toDouble))) 
 
-		locdata.map(a=> a._2).saveAsTextFile(outputfile);
+		locdata.map(a=> a.mkString(",")).saveAsTextFile(outputfile);
 			     
 		
 		///val single_mmsi = data.map(x => (x(0), Array(x(1), x(2)).mkString(",")))
