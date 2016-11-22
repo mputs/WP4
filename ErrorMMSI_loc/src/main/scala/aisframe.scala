@@ -62,7 +62,7 @@ object AISframe
 		val loc_orig = locdata.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
 		
 				   
-		val couples = loc_orig.join(shipframe);
+		//val couples = loc_orig.join(shipframe);
 		//val ship = 
 		
 
