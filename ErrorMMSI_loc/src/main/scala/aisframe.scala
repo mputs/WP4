@@ -43,19 +43,19 @@ object AISframe
     				.filter(x=>x(1).toDouble<lat&x(2).toDouble>lat&x(3).toDouble<lon&x(4).toDouble>lon).map(x=>x(0))
   			return (if (x.length==0) "SEA" else x(0))
 		}
+		
 		val locdata = sc.textFile(locdatafile).map(_.split(","))
 			.filter(x=> x(0)!="mmsi")
 			.map(x=>x++Array(findHarbour(x(1).toDouble,x(2).toDouble))) 
 
-		locdata.map(a=> a.mkString(",")).saveAsTextFile(outputfile);
+		//locdata.map(a=> a.mkString(",")).saveAsTextFile(outputfile);
 			     
 		
-		///val single_mmsi = data.map(x => (x(0), Array(x(1), x(2)).mkString(",")))
-		///val loc_orig = locdata.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
+		val shipframe = data.map(x => (x(0), Array(x(1), x(2)).mkString(",")))
+		val loc_orig = locdata.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
 		
-		//val loc_orig = locdata.map(x => (x(0), Array(x(0), x(8)., x(1), x(2), x(4)).mkString(",")))
-					   
-		///val couples = loc_orig.join(single_mmsi);
+				   
+		val couples = loc_orig.join(shipframe);
 		//val ship = 
 		
 
@@ -72,7 +72,8 @@ object AISframe
         //aantalmmsi.map(a=> Array(a._1,a._2).mkString(",")).saveAsTextFile(outputfile);
         //println ("dubbele mmsi = " + aantalmmsi.count);
         //val filt_max_mmsi = max_mmsi.filter(y=>checkimo(y._2(0).toString));
-        ///couples.map(a=> a._2).saveAsTextFile(outputfile);
+        
+		couples.map(a=> a._2).saveAsTextFile(outputfile);
 
 		sc.stop()
 	}
