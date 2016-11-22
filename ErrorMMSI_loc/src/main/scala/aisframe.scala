@@ -51,17 +51,20 @@ object AISframe
 			.filter(x=> x(0)!="mmsi")
 			.mapPartitions{it => 
 				       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				       it.map(x=>x++Array(findHarbour(x(1).toDouble,x(2).toDouble),df.parse(x(8)).getTime))
+				       it.map(x=>x++Array(findHarbour(x(1).toDouble,x(2).toDouble),df.parse(x(8)).getTime/1000))
 			}
-		//"2015-12-02 04:00:00.003"	
-
-		locdata.map(a=> a.mkString(",")).saveAsTextFile(outputfile);
+		
+		//locdata.map(a=> a.mkString(",")).saveAsTextFile(outputfile);
 			     
 		
 		val shipframe = data.map(x => (x(0), Array(x(1), x(2)).mkString(",")))
-		val loc_orig = locdata.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
-		
-				   
+		val ship_orig = locdata.map(x=>(x(0), Array(x(1),x(2),x(4),x(8),x(9),x(10))))
+			.groupByKey()
+			.map(x=>(x._1,x._2.toList.sortWith((a,b)=>a(5).toLong<b(5).toLong)))
+
+		//val enters = ship_orig.flatMap(x=>(x._2.map(y=>y(4)).toArray.sliding(2).filter(x(0)!=x(1) && x(1)!="SEA" ).map(x=>x(1)),1)).reduceByKey
+		val enters = ship_orig.flatMap(x=>x._2.map(y=>y(4)).toArray.sliding(2).toArray.filter(x=>x.length>1).map(x=>((x(0),x(1)),1))).filter(x._1._1=="SEA" && x._1._2=="SEA").reduceByKey(_+_)
+		enters.map(a=> Array(a._1._1, a._1._2,a._2).mkString(",")).saveAsTextFile(outputfile);
 		//val couples = loc_orig.join(shipframe);
 		//val ship = 
 		
