@@ -80,7 +80,7 @@ object AISframe
         //println ("dubbele mmsi = " + aantalmmsi.count);
         //val filt_max_mmsi = max_mmsi.filter(y=>checkimo(y._2(0).toString));
         
-		couples.map(a=> a._2).saveAsTextFile(outputfile);
+		//couples.map(a=> a._2).saveAsTextFile(outputfile);
 
 		sc.stop()
 	}
