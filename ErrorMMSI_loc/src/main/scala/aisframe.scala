@@ -49,9 +49,9 @@ object AISframe
 		
 		val locdata = sc.textFile(locdatafile).map(_.split(","))
 			.filter(x=> x(0)!="mmsi")
-			.mapPartitions(it => 
+			.mapPartitions{it => 
 				       val df = new SimpleDateFormat("yyyy-MM-dd HH:mmXXX")
-				       it.map(x=>x++Array(findHarbour(x(1).toDouble,x(2).toDouble),df.parse(x(8)).getTime))) 
+				       it.map(x=>x++Array(findHarbour(x(1).toDouble,x(2).toDouble),df.parse(x(8)).getTime))}
 			
 
 		locdata.map(a=> a.mkString(",")).saveAsTextFile(outputfile);
