@@ -1,4 +1,4 @@
-#howto select ships in harbours using spark
+#howto select ships arriving at the harbours using spark
 
 we start with a file containing bounding boxes around harbours. the CSV contains five columns: harbour,lat1,lon1,lat2,lon2
 
