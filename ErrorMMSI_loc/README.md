@@ -11,7 +11,7 @@ This gives us an array of arrays
 as already mentioned, the data is now available on the driver node. we now have distribute it to the worker nodes:
 
 ```scala
-val brLocHarb = sc.broadcast(data)
+val brLocHarb = sc.broadcast(LocHarb)
 ```
 
 To use the locations on the worker nodes, we can now use:
