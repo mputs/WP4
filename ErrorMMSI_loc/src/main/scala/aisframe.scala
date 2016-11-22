@@ -29,7 +29,8 @@ object AISframe
 			.map(_.split(","))
 			//.filter(x => x(2)=="1")
 		
-		val LocHarb = io.Source.fromFile("ports_locations.csv").getLines.map(_.split(",")).toArray
+		//val LocHarb = io.Source.fromFile("ports_locations.csv").getLines.map(_.split(",")).toArray
+		val LocHarb = sc.fromFile("hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/ports_locations.csv").map(_.split(",")).collect()
 		val brLocHarb = sc.broadcast(LocHarb)
 		
 		
