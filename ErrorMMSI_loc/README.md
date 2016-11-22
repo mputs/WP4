@@ -4,9 +4,9 @@ we start with a file containing bounding boxes around harbours. the CSV contains
 
 This file should be read inside of the driver node:
 
-~~```scala
+<del>```scala
 val LocHarb = io.Source.fromFile("abc.csv").getLines.toArray.map(_.split(","))
-```~~
+```</del>
 This gives us an array of arrays
 as already mentioned, the data is now available on the driver node. we now have distribute it to the worker nodes:
 
