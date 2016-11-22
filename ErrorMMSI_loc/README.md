@@ -2,11 +2,16 @@
 
 we start with a file containing bounding boxes around harbours. the CSV contains five columns: harbour,lat1,lon1,lat2,lon2
 
-This file should be read inside of the driver node:
+This file should be read inside of the driver node. In scala this should be the following code:
 
-<del>```scala
+```scala
 val LocHarb = io.Source.fromFile("abc.csv").getLines.toArray.map(_.split(","))
-```</del>
+```
+
+For some reason, this does not work in Spark. therefore, we read it as an RDD and collect the result:
+```scala
+val locHarb = sc.textFile("abc.csv").map(_.split(",")).collect
+```
 This gives us an array of arrays
 as already mentioned, the data is now available on the driver node. we now have distribute it to the worker nodes:
 
