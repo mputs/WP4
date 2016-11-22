@@ -11,6 +11,7 @@ object AISframe
 	{
 		val hdfsprefix = "hdfs://namenode.ib.sandbox.ichec.ie:8020/" 
 		val tfiles = hdfsprefix + args(0)
+		//val locharbdata = hdfsprefix + args(1)
 		val locdatafile = hdfsprefix + args(1)
 		val outputfile = hdfsprefix + args(2)
 		
@@ -28,17 +29,32 @@ object AISframe
 			.map(_.split(","))
 			//.filter(x => x(2)=="1")
 		
+		val LocHarb = io.Source.fromFile("ports_locations.csv").getLines.toArray.map(_.split(","))
+		val brLocHarb = sc.broadcast(LocHarb)
+		
+		
 		//val locdata = sc.textFile(locdatafile)
 		//	.map(_.split(",")).map("%.3g" format _)
 		//	.filter(x=> x(0)!="mmsi")
-		val locdata = sc.textFile(locdatafile).map(_.split(",")).filter(x=> x(0)!="mmsi" && x(1).toDouble>=4.7298 && x(1).toDouble<=4.8814  && x(2).toDouble>=52.3878  && x(2).toDouble<=52.4406 )
+		def findHarbour(lat: Double, lon: Double): String =
+		{
+  			val x = brLocHarb.value
+    				.filter(x=>x(1).toDouble<lat&x(2).toDouble>lat&x(3).toDouble<lon&x(4).toDouble>lon).map(x=>x(0))
+  			return (if (x.length==0) "SEA" else x(0))
+		}
+		val locdata = sc.textFile(locdatafile).map(_.split(","))
+			.filter(x=> x(0)!="mmsi")
+			.map(x=>x++Array(findHarbour(x(1).toDouble,x(2).toDouble))) 
 
-
-		val single_mmsi = data.map(x => (x(0), Array(x(1), x(2)).mkString(",")))
-		val loc_orig = locdata.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
+		locdata.map(a=> a._2).saveAsTextFile(outputfile);
+			     
+		
+		///val single_mmsi = data.map(x => (x(0), Array(x(1), x(2)).mkString(",")))
+		///val loc_orig = locdata.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
+		
 		//val loc_orig = locdata.map(x => (x(0), Array(x(0), x(8)., x(1), x(2), x(4)).mkString(",")))
 					   
-		val couples = loc_orig.join(single_mmsi);
+		///val couples = loc_orig.join(single_mmsi);
 		//val ship = 
 		
 
@@ -55,7 +71,7 @@ object AISframe
         //aantalmmsi.map(a=> Array(a._1,a._2).mkString(",")).saveAsTextFile(outputfile);
         //println ("dubbele mmsi = " + aantalmmsi.count);
         //val filt_max_mmsi = max_mmsi.filter(y=>checkimo(y._2(0).toString));
-        couples.map(a=> a._2).saveAsTextFile(outputfile);
+        ///couples.map(a=> a._2).saveAsTextFile(outputfile);
 
 		sc.stop()
 	}
