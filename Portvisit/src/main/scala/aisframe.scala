@@ -24,7 +24,7 @@ object AISframe
 
 
 		val conf = new SparkConf()
-		conf.setAppName("AIS-frame")
+		conf.setAppName("Portvisit")
 		conf.setMaster("yarn-client")
 		val sc = new SparkContext(conf)
 
