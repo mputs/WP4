@@ -77,7 +77,7 @@ object AISframe
 
 		//val enters = ship_orig.flatMap(x=>(x._2.map(y=>y(4)).toArray.sliding(2).filter(x(0)!=x(1) && x(1)!="SEA" ).map(x=>x(1)),1)).reduceByKey
 		val enters = ship_orig.flatMap(x=>x._2.map(y=>y(4)).toArray.sliding(2).toArray.filter(x=>x.length>1).map(x=>((x(0),x(1)),1))).filter(x=>x._1._1!="SEA" || x._1._2!="SEA").reduceByKey(_+_)
-		enters.map(a=> Array(a._1._0, a._1._1, a._1._2,a._2).mkString(",")).saveAsTextFile(outputfile);
+		enters.map(a=> Array(a._1._1, a._1._2,a._2).mkString(",")).saveAsTextFile(outputfile);
 
 
 		sc.stop()
