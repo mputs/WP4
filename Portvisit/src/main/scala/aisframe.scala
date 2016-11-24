@@ -30,8 +30,8 @@ object AISframe
 		conf.setMaster("yarn-client")
 		val sc = new SparkContext(conf)
 		
-		val seashipdata = sc.textFile(seaships)
-			.map(_.split(","))
+		//val seashipdata = sc.textFile(seaships)
+		//	.map(_.split(","))
 			//.filter(x => x(2)=="1")
 		
 		//val LocHarb = io.Source.fromFile("ports_locations.csv").getLines.map(_.split(",")).toArray
