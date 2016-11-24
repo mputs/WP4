@@ -12,12 +12,6 @@ object AISframe
 
 	def main(args: Array[String])
 	{
-		def findHarbour(lat: Double, lon: Double): String =
-		{
-  			val x = brLocHarb.value
-    				.filter(x=>x(1).toDouble<lat&x(2).toDouble>lat&x(3).toDouble<lon&x(4).toDouble>lon).map(x=>x(0))
-  			return (if (x.length==0) "SEA" else x(0))
-		}
 		
 		
 		val hdfsprefix = "hdfs://namenode.ib.sandbox.ichec.ie:8020/" 
@@ -44,6 +38,14 @@ object AISframe
 		val LocHarb = sc.textFile("hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/ports_locations.csv").map(_.split(",")).collect()
 		val brLocHarb = sc.broadcast(LocHarb)
 		
+		def findHarbour(lat: Double, lon: Double): String =
+		{
+  			val x = brLocHarb.value
+    				.filter(x=>x(1).toDouble<lat&x(2).toDouble>lat&x(3).toDouble<lon&x(4).toDouble>lon).map(x=>x(0))
+  			return (if (x.length==0) "SEA" else x(0))
+		}
+
+
                //2015-10-08 22:00:00.001
                 val data = sc.textFile(rawdatafile).map(_.split(","))
                         .filter(x=>x(0)!="mmsi")
