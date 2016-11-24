@@ -20,9 +20,9 @@ object AISframe
 		val rawdatafile = hdfsprefix + args(1)
 		val outputfile = hdfsprefix + args(2)
 		
-		//val tfiles = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/defframe6all.csv"
-		//val locdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/2015120100*.csv.gz"
-		//val outputfile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/AMS1.csv"
+		//val seaships = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/defframe6all.csv"
+		//val rawdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/2015120100*.csv.gz"
+		//val outputfile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/qtest.csv"
 
 
 		val conf = new SparkConf()
@@ -51,10 +51,10 @@ object AISframe
                //2015-10-08 22:00:00.001
 		val data = sc.textFile(rawdatafile).map(_.split(","))
 			.filter(x=>x(0)!="mmsi")
-			.map(x => (x(0), Array(x(0), x(1), x(2), x(3), x(4)).mkString(",")))
+			.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
 			.join(seashiplist)
 			.map(x => x._2._1.split(","))
-			.map(x=> ((x(0), x(8).substring(0,x(8).lastIndexOf(":") ) ),(x(1).toDouble, x(2).toDouble, x(4).toDouble,1.toInt )))
+			.map(x=> ((x(0), x(4).substring(0,x(4).lastIndexOf(":") ) ),(x(1).toDouble, x(2).toDouble, x(3).toDouble,1.toInt )))
 			.reduceByKey((a,b)=>(a._1+b._1,a._2+b._2,a._3+b._3,a._4+b._4))
 			.map(x=>Array(x._1._1,x._1._2,(x._2._1/x._2._4).toString, (x._2._2/x._2._4).toString,(x._2._3/x._2._4).toString))
 			.mapPartitions{it =>
