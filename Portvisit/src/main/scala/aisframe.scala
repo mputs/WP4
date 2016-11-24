@@ -52,7 +52,7 @@ object AISframe
 		val data = sc.textFile(rawdatafile).map(_.split(","))
 			.filter(x=>x(0)!="mmsi")
 			.map(x => (x(0), Array(x(0), x(1), x(2), x(3), x(4)).mkString(",")))
-			.join(single_mmsi)
+			.join(seashiplist)
 			.map(x=> ((x(0), x(8).substring(0,x(8).lastIndexOf(":") ) ),(x(1).toDouble, x(2).toDouble, x(4).toDouble,1.toInt )))
 			.reduceByKey((a,b)=>(a._1+b._1,a._2+b._2,a._3+b._3,a._4+b._4))
 			.map(x=>Array(x._1._1,x._1._2,(x._2._1/x._2._4).toString, (x._2._2/x._2._4).toString,(x._2._3/x._2._4).toString))
