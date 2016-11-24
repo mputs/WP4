@@ -46,7 +46,8 @@ object AISframe
 		
 		//2015-10-08 22:00:00.001
 		val data = sc.textFile(rawdatafile).map(_.split(","))
-			.filter(x=>x(0)!="mmsi").map(x=>(x(0), x(8).substring(0,lastIndexOf(":")), (x(1), x(2), x(4)))
+			.filter(x=>x(0)!="mmsi")
+			.map(x=> ((x(0), x(8).substring(0,lastIndexOf(":") ) ),(x(1), x(2), x(4) )))
 			.reduceByKey((a,b,x)=>(a.sum/a.length, b.sum/b.length, c.sum/c.length))
 			.map(x=>(x._1.productIterator.toArray++x._2.productIterator.toArray).map(x=> x.toString))
 			.mapPartitions{it => 
