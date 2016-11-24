@@ -48,11 +48,11 @@ object AISframe
 		val data = sc.textFile(rawdatafile).map(_.split(","))
 			.filter(x=>x(0)!="mmsi").map(x=>(x(0), x(8).substring(0,lastIndexOf(":")), (x(1), x(2), x(4)))
 			.reduceByKey((a,b,x)=>(a.sum/a.length, b.sum/b.length, c.sum/c.length))
-			.map(x._1.productIterator.toArray++x._2.productIterator.toArray)     
+			.map((x._1.productIterator.toArray++x._2.productIterator.toArray).map(x=> x.toString))
 			.mapPartitions{it => 
 				       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				       it.map(x=>x++Array(findHarbour(x(2).toDouble,x(3).toDouble),df.parse(x(1)).getTime))
-				      
+			} 
 
 		
 		//val shipframe = data.map(x => (x(0), Array(x(1), x(2)).mkString(",")))
