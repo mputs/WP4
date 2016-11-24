@@ -45,10 +45,13 @@ object AISframe
   			return (if (x.length==0) "SEA" else x(0))
 		}
 
-
+		val seashiplist = seaships.map(x => (x(0), x(2).mkString(",")))
+		
                //2015-10-08 22:00:00.001
 		val data = sc.textFile(rawdatafile).map(_.split(","))
 			.filter(x=>x(0)!="mmsi")
+			.map(x => (x(0), Array(x(0), x(1), x(2), x(3), x(4)).mkString(",")))
+			.join(single_mmsi)
 			.map(x=> ((x(0), x(8).substring(0,x(8).lastIndexOf(":") ) ),(x(1).toDouble, x(2).toDouble, x(4).toDouble,1.toInt )))
 			.reduceByKey((a,b)=>(a._1+b._1,a._2+b._2,a._3+b._3,a._4+b._4))
 			.map(x=>Array(x._1._1,x._1._2,(x._2._1/x._2._4).toString, (x._2._2/x._2._4).toString,(x._2._3/x._2._4).toString))
@@ -58,8 +61,7 @@ object AISframe
 			}
 
 		//data: mmsi timestamp lat lon speed harbour time
-		
-				
+
 
 		//val shipframe = data.map(x => (x(0), Array(x(1), x(2)).mkString(",")))
 		val ship_orig = data.map(x=>(x(0).toString, Array(x(1).toString,x(2).toString,x(3).toString,x(4).toString,x(5).toString,x(6).toString)))
