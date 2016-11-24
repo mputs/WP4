@@ -44,8 +44,9 @@ object AISframe
     				.filter(x=>x(1).toDouble<lat&x(2).toDouble>lat&x(3).toDouble<lon&x(4).toDouble>lon).map(x=>x(0))
   			return (if (x.length==0) "SEA" else x(0))
 		}
-
-		val seashiplist = seaships.map(x => (x(0), x(2).mkString(",")))
+		val seashiplist = sc.textFile(seaships)
+				.map(_.split(","))
+				.map(x => (x(0), x(2).mkString(",")))
 		
                //2015-10-08 22:00:00.001
 		val data = sc.textFile(rawdatafile).map(_.split(","))
