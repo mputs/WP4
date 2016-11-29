@@ -41,7 +41,7 @@ object AISframe
 		def findHarbour(lat: Double, lon: Double): String =
 		{
   			val x = brLocHarb.value
-    				.filter(x=>x(1).toDouble<lat&x(2).toDouble>lat&x(3).toDouble<lon&x(4).toDouble>lon).map(x=>x(0))
+    				.filter(x=>x(1).toDouble<lat&x(2).toDouble>lat&x(3).toDouble<lon&x(4).toDouble>lon).map(x=>x(0));
   			return (if (x.length==0) "SEA" else x(0))
 		}
 		val seashiplist = sc.textFile(seaships)
@@ -60,8 +60,7 @@ object AISframe
 			.mapPartitions{it =>
 				       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				       it.map(x=>x++Array(findHarbour(x(2).toDouble,x(3).toDouble),df.parse(x(1)).getTime.toString))
-			}
-
+	
 		//data: mmsi timestamp lat lon speed harbour time
 
 
@@ -89,11 +88,11 @@ object AISframe
 
 		val getshipsinharbour = ship_orig.flatMap(x=>x._2.map(y=>y(4))
 					       		.toArray.sliding(2).toArray
-					       		.filter(x=>x.length>1)
-					       		.map(x=>((x(0),x(1),x._1),1)) )
+					       		.filter(z=>z.length>1)
+					       		.map(z=>((z(0),z(1),x._1),1)) )
 					       .filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
 					       .reduceByKey(_+_)
-		getshipsinharbour.map(a=> Array(a._0,a._1._1, a._1._2,a._2).mkString(",")).saveAsTextFile(outputfile);
+		getshipsinharbour.map(a=> Array(a._1._1, a._1._2,a._1._3, a._2).mkString(",")).saveAsTextFile(outputfile);
 
 		sc.stop()
 	}
