@@ -93,7 +93,7 @@ object AISframe
 					       		.map(x=>((x(0),x(1),x._1),1)) )
 					       .filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
 					       .reduceByKey(_+_)
-		getshipsinharbour.map(a=> Array(x(0),a._1._1, a._1._2,a._2).mkString(",")).saveAsTextFile(outputfile);
+		getshipsinharbour.map(a=> Array(a._0,a._1._1, a._1._2,a._2).mkString(",")).saveAsTextFile(outputfile);
 
 		sc.stop()
 	}
