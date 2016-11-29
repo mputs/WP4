@@ -60,7 +60,7 @@ object AISframe
 			.mapPartitions{it =>
 				       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				       it.map(x=>x++Array(findHarbour(x(2).toDouble,x(3).toDouble),df.parse(x(1)).getTime.toString))
-	
+			}
 		//data: mmsi timestamp lat lon speed harbour time
 
 
