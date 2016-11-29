@@ -49,51 +49,45 @@ object AISframe
 				.map(x => (x(0), x(2).mkString(",")))
 		
                //2015-10-08 22:00:00.001
+		def Median(x: List[Double]):Double =
+		{
+			x.sortWith(_<_)(x.length/2)
+		}
 		val data = sc.textFile(rawdatafile).map(_.split(","))
 			.filter(x=>x(0)!="mmsi")
-			.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
+			.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(","))) // mmsi, lat, lon, speed, timestamp 
 			.join(seashiplist)
 			.map(x => x._2._1.split(","))
-			.map(x=> ((x(0), x(4).substring(0,x(4).lastIndexOf(":") ) ),(x(1).toDouble, x(2).toDouble, x(3).toDouble,1.toInt )))
-			.reduceByKey((a,b)=>(a._1+b._1,a._2+b._2,a._3+b._3,a._4+b._4))
-			.map(x=>Array(x._1._1,x._1._2,(x._2._1/x._2._4).toString, (x._2._2/x._2._4).toString,(x._2._3/x._2._4).toString))
 			.mapPartitions{it =>
 				       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				       it.map(x=>x++Array(findHarbour(x(2).toDouble,x(3).toDouble),df.parse(x(1)).getTime.toString))
-			}
-		//data: mmsi timestamp lat lon speed harbour time
-
-
-		//val shipframe = data.map(x => (x(0), Array(x(1), x(2)).mkString(",")))
-		val ship_orig = data.map(x=>(x(0).toString, Array(x(1).toString,x(2).toString,x(3).toString,x(4).toString,x(5).toString,x(6).toString)))
+				       it.map(x=>x++Array((df.parse(x(4)).getTime/900000).toString))
+			} //mmsi, lat, lon, speed, timestamp, time
+			.map(x=>((x(0),x(5)), (x(1),x(2),x(3)))) // ((mmsi, time), (lat, lon, speed))
 			.groupByKey()
-			.map(x=>(x._1,x._2.toList.sortWith((a,b)=>a(5).toLong<b(5).toLong))).cache
+			.map(x=> (x._1,(
+				Median(x._2.toList.map(y=>y._1.toDouble).toList), 
+				Median(x._2.toList.map(y=>y._2.toDouble).toList), 
+				Median(x._2.toList.map(y=>y._3.toDouble).toList) )) )
+			.map(x=> (x._1, (x._2._1, x._2._2, x._2._3, findHarbour(x._2._1, x._2._2))))
+			.map(x=> ((x._1._1),(x._2._2, x._2._1, x._2._2,x._2._3,x._2._4)) )
+			// tuple of ((mmsi), (time, lat, lon, speed, harbour))
+				
+			
+			
 
 
-		// ship_orig: mmsi, (timestamp, lat, lon, speed, harbour, time)*
-
-		
-
-		//val enters = ship_orig.flatMap(x=>(x._2.map(y=>y(4)).toArray.sliding(2).filter(x(0)!=x(1) && x(1)!="SEA" ).map(x=>x(1)),1)).reduceByKey
-		val enters = ship_orig.flatMap(x=>x._2.map(y=>y(4))
-					       		.toArray.sliding(2).toArray
-					       		.filter(x=>x.length>1)
-					       		.map(x=>((x(0),x(1)),1)) )
-					       	.filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
-					       .reduceByKey(_+_)
-		//enters.map(a=> Array(a._1._1, a._1._2,a._2).mkString(",")).saveAsTextFile(outputfile);
-
-		
+		val enters = data.groupByKey()
+			.flatMap(x=>x._2.toList.sortWith((a,b)=>a._1.toLong<b._1.toLong)
+						.map(y=>y._5)
+						.sliding(2)
+						.toArray
+						.filter(x=>x.length>1)
+						.map(y=>((x._1,y(0),y(1)),1))   )
+			.reduceByKey(_+_)
 
 
-		val getshipsinharbour = ship_orig.flatMap(x=>x._2.map(y=>y(4))
-					       		.toArray.sliding(2).toArray
-					       		.filter(z=>z.length>1)
-					       		.map(z=>((z(0),z(1),x._1),1)) )
-					       .filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
-					       .reduceByKey(_+_)
-		getshipsinharbour.map(a=> Array(a._1._1, a._1._2,a._1._3, a._2).mkString(",")).saveAsTextFile(outputfile);
-
+		enters.map(a=> Array(a._1._1, a._1._2, a._1._3,a._2).mkString(",")).saveAsTextFile(outputfile);
+		// ship_orig: mmsi, (time, lat, lon, speed, harbour)*
 		sc.stop()
 	}
 }
