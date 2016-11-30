@@ -79,8 +79,8 @@ object AISframe
 					       		.toArray.sliding(2).toArray
 					       		.filter(x=>x.length>1)
 					       		.map(x=>((x(0),x(1)),1)) )
-					       //	.filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
-					       //.reduceByKey(_+_)
+					       	.filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
+					       .reduceByKey(_+_)
 		//enters.map(a=> Array(a._1._1, a._1._2,a._2).mkString(",")).saveAsTextFile(outputfile);
 
 		
@@ -90,8 +90,9 @@ object AISframe
 					       		.toArray.sliding(2).toArray
 					       		.filter(z=>z.length>1)
 					       		.map(z=>((z(0),z(1),x._1),1)) )
-					       .filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
-					       .reduceByKey(_+_)
+							.filter(x=> x._1._3 ="477547200")
+					       //.filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
+					       //.reduceByKey(_+_)
 		getshipsinharbour.map(a=> Array(a._1._1, a._1._2,a._1._3, a._2).mkString(",")).saveAsTextFile(outputfile);
 
 		sc.stop()
