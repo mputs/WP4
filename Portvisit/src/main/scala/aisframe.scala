@@ -59,7 +59,7 @@ object AISframe
 			.reduceByKey((a,b)=>(a._1+b._1,a._2+b._2,a._3+b._3,a._4+b._4))
 			.map(x=>Array(x._1._1,x._1._2,(x._2._1/x._2._4).toString, (x._2._2/x._2._4).toString,(x._2._3/x._2._4).toString))
 			.mapPartitions{it =>
-				       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+				       val df = new SimpleDateFormat("yyyy-MM-dd HH:m");
 				       it.map(x=>x++Array(findHarbour(x(2).toDouble,x(3).toDouble),df.parse(x(1)).getTime.toString))
 			}
 		//data: mmsi timestamp lat lon speed harbour time
