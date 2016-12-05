@@ -50,18 +50,20 @@ object AISframe
 		
                //2015-10-08 22:00:00.001
 		val data = sc.textFile(rawdatafile).map(_.split(","))
-			.filter(x=>x(0)!="mmsi")
+			//.filter(x=>x(0)!="mmsi")249005000
+			.filter(x=>x(0)!="249005000")
 			.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
 			.join(seashiplist)
 			.map(x => x._2._1.split(","))
 			//.map(x=> ((x(0), x(4).substring(0,x(4).lastIndexOf(":") ) ),(x(1).toDouble, x(2).toDouble, x(3).toDouble,1.toInt )))
 			.map(x=> ((x(0), x(4).substring(0,15) ),(x(1).toDouble, x(2).toDouble, x(3).toDouble,1.toInt )))
-			.reduceByKey((a,b)=>(a._1+b._1,a._2+b._2,a._3+b._3,a._4+b._4))
-			.map(x=>Array(x._1._1,x._1._2,(x._2._1/x._2._4).toString, (x._2._2/x._2._4).toString,(x._2._3/x._2._4).toString))
+			//.reduceByKey((a,b)=>(a._1+b._1,a._2+b._2,a._3+b._3,a._4+b._4))
+			//.map(x=>Array(x._1._1,x._1._2,(x._2._1/x._2._4).toString, (x._2._2/x._2._4).toString,(x._2._3/x._2._4).toString))
 			.mapPartitions{it =>
 				       val df = new SimpleDateFormat("yyyy-MM-dd HH:m");
 				       it.map(x=>x++Array(findHarbour(x(2).toDouble,x(3).toDouble),df.parse(x(1)).getTime.toString))
 			}
+		//data7.map(a=>Array(a(1)).mkString(",")).saveAsTextFile("hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/schipje.csv")
 		//data: mmsi timestamp lat lon speed harbour time
 
 
@@ -92,10 +94,11 @@ object AISframe
 					       		.filter(z=>z.length>1)
 					       		.map(z=>((z(0),z(1),x._1),1)) )
 							//.filter(x=> x._1._3 =="304783000")
-					       .filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
+					       //.filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
 					       .reduceByKey(_+_)
 		getshipsinharbour.map(a=> Array(a._1._1, a._1._2,a._1._3, a._2).mkString(",")).saveAsTextFile(outputfile);
 
 		sc.stop()
 	}
 }
+
