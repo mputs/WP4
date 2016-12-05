@@ -55,7 +55,7 @@ object AISframe
 			.join(seashiplist)
 			.map(x => x._2._1.split(","))
 			//.map(x=> ((x(0), x(4).substring(0,x(4).lastIndexOf(":") ) ),(x(1).toDouble, x(2).toDouble, x(3).toDouble,1.toInt )))
-			.map(x=> ((x(0), x(4).substring(0,18 ) ),(x(1).toDouble, x(2).toDouble, x(3).toDouble,1.toInt )))
+			.map(x=> ((x(0), x(4).substring(0,15) ),(x(1).toDouble, x(2).toDouble, x(3).toDouble,1.toInt )))
 			.reduceByKey((a,b)=>(a._1+b._1,a._2+b._2,a._3+b._3,a._4+b._4))
 			.map(x=>Array(x._1._1,x._1._2,(x._2._1/x._2._4).toString, (x._2._2/x._2._4).toString,(x._2._3/x._2._4).toString))
 			.mapPartitions{it =>
