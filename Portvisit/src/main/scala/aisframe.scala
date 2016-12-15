@@ -56,7 +56,7 @@ object AISframe
                //2015-10-08 22:00:00.001
 		val data = sc.textFile(rawdatafile).map(_.split(","))
 			.filter(x=>x(0)!="mmsi")
-			//.filter(x=>x(0)=="232002165")
+			.filter(x=>x(0)=="374846000")
 			.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(","))) // mmsi, lat, lon, speed, timestamp 
 			.join(seashiplist)
 			.map(x => x._2._1.split(","))
@@ -83,15 +83,15 @@ object AISframe
 					 	.sliding(2)
 					 	.toArray
 					 	.filter(x=>x.length>1)))
+					       	.filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
 				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
-				.reduceByKey(_+_)	
+				//.reduceByKey(_+_)	
 
 		
 		//val enters = ship_orig.flatMap(x=>x._2.map(y=>y(4))
 		//			       		.toArray.sliding(2).toArray
 		//			       		.filter(x=>x.length>1)
 		//			       		.map(x=>((x(0),x(1)),1)) )
-		//			       	.filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
 		//			       .reduceByKey(_+_)
 		enters.map(a=> Array(a._1._1, a._1._2,a._1._3,a._2).mkString(",")).saveAsTextFile(outputfile);
 
