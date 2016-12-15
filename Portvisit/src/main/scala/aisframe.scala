@@ -86,6 +86,7 @@ object AISframe
 					       //	.filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
 				//.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
 				//.reduceByKey(_+_)	
+				//data2.map(a=>Array(a._1,a._2.mkString(",")).mkString(",")).saveAsTextFile(outputfile)
 
 		
 		//val enters = ship_orig.flatMap(x=>x._2.map(y=>y(4))
@@ -94,7 +95,7 @@ object AISframe
 		//			       		.map(x=>((x(0),x(1)),1)) )
 		//			       .reduceByKey(_+_)
 		//enters.map(a=> Array(a._1._1, a._1._2,a._1._3,a._2).mkString(",")).saveAsTextFile(outputfile);
-		enters.map(a=> Array(a._1.mkString(","),a._2.mkString(",")).saveAsTextFile(outputfile);
+		enters.map(a=> Array(a._1 ,a._2).mkString(",")).saveAsTextFile(outputfile);
 		
 
 
