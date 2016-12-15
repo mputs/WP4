@@ -62,7 +62,7 @@ object AISframe
 			.map(x => x._2._1.split(","))
 			.mapPartitions{it =>
 				       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				       it.map(x=>x++Array((df.parse(x(4)).getTime/60000).toString))
+				       it.map(x=>x++Array((df.parse(x(4)).getTime/600000).toString))
 			} //mmsi, lat, lon, speed, timestamp, time
 			.map(x=>((x(0),x(5)), (x(1),x(2),x(3)))) // ((mmsi, time), (lat, lon, speed))
 			.groupByKey()
@@ -84,8 +84,8 @@ object AISframe
 					 	.toArray
 					 	.filter(x=>x.length>1)))
 					       //	.filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
-				//.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
-				//.reduceByKey(_+_)	
+				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
+				.reduceByKey(_+_)	
 				//data2.map(a=>Array(a._1,a._2.mkString(",")).mkString(",")).saveAsTextFile(outputfile)
 
 		
