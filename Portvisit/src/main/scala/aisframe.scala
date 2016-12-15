@@ -83,7 +83,7 @@ object AISframe
 					 	.sliding(2)
 					 	.toArray
 					 	.filter(x=>x.length>1)))
-					       	.filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
+					       //	.filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
 				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
 				//.reduceByKey(_+_)	
 
