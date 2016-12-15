@@ -60,7 +60,7 @@ object AISframe
 			.map(x => x._2._1.split(","))
 			.mapPartitions{it =>
 				       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				       it.map(x=>x++Array((df.parse(x(4)).getTime/900000).toString))
+				       it.map(x=>x++Array((df.parse(x(4)).getTime/60000).toString))
 			} //mmsi, lat, lon, speed, timestamp, time
 			.map(x=>((x(0),x(5)), (x(1),x(2),x(3)))) // ((mmsi, time), (lat, lon, speed))
 			.groupByKey()
