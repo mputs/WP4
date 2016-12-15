@@ -92,13 +92,18 @@ object AISframe
 
 		//val enters = ship_orig.flatMap(x=>(x._2.map(y=>y(4)).toArray.sliding(2).filter(x(0)!=x(1) && x(1)!="SEA" ).map(x=>x(1)),1)).reduceByKey
 		
-		val enters = data.groupByKey()
-			.flatMap(x=>x._2.toList.sortWith((a,b)=>a._1.toLong<b._1.toLong)
-						.map(y=>y._5)
-						.sliding(2)
-						.toArray
-						.filter(x=>x.length>1)
-						.map(y=>((x._1,y(0),y(1)),1))   ).reduceByKey(_+_)
+		//val enters = data.groupByKey()
+		//	.flatMap(x=>x._2.toList.sortWith((a,b)=>a._1.toLong<b._1.toLong)
+		//				.map(y=>y._5)
+		//				.sliding(2)
+		//				.toArray
+		//				.filter(x=>x.length>1)
+		//				.map(y=>((x._1,y(0),y(1)),1))   ).reduceByKey(_+_)
+		val enters = data3.map(x=>(x._1._1, (x._1._2, x._2)))
+					.groupByKey().map(x=>(x._1,x._2.toList.sortWith((a,b)=>a._1<b._1)
+					.map(_._2(2)).sliding(2).toArray
+					.filter(x=>x.length>1))).flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
+					.reduceByKey(_+_)
 		
 		//val enters = ship_orig.flatMap(x=>x._2.map(y=>y(4))
 		//			       		.toArray.sliding(2).toArray
