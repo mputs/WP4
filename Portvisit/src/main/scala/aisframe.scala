@@ -94,7 +94,7 @@ object AISframe
 		//			       		.map(x=>((x(0),x(1)),1)) )
 		//			       .reduceByKey(_+_)
 		//enters.map(a=> Array(a._1._1, a._1._2,a._1._3,a._2).mkString(",")).saveAsTextFile(outputfile);
-		enters.map(a=> Array(a._1,a._2).mkString(",")).saveAsTextFile(outputfile);
+		enters.map(a=> Array(a._1.mkString(","),a._2.mkString(",")).saveAsTextFile(outputfile);
 		
 
 
