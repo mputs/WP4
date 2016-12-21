@@ -83,9 +83,9 @@ object AISframe
 					 	.sliding(2)
 					 	.toArray
 					 	.filter(x=>x.length>1)))
-					       //	.filter(x=>x._1._1!="SEA" || x._1._2!="SEA")
 				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
 				.reduceByKey(_+_)	
+				.filter(x=>x._1._2!="SEA" || x._1._3!="SEA") 
 				//data2.map(a=>Array(a._1,a._2.mkString(",")).mkString(",")).saveAsTextFile(outputfile)
 
 		
