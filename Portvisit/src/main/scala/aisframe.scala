@@ -70,7 +70,7 @@ object AISframe
 				Median(x._2.toList.map(y=>y._1.toDouble).toList), 
 				Median(x._2.toList.map(y=>y._2.toDouble).toList), 
 				Median(x._2.toList.map(y=>y._3.toDouble).toList),
-				(x._2.map(y=>y._4).take(16)) ).take(1).mkString(","))))
+				(x._2.map(y=>y._4).take(16) ).take(1).mkString(","))))
 			.map(x=> (x._1, Array(x._2._1, x._2._2, x._2._3, x._2._4, findHarbour(x._2._1, x._2._2))))
 			// tuple of ((mmsi, time), Array(lat, lon, speed, harbour))
 		//orig data7.map(a=>Array(a(1), a(2),a(3),a(4),a(5),a(6)).mkString(",")).saveAsTextFile("hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/schipje.csv")
