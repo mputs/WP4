@@ -64,13 +64,14 @@ object AISframe
 				       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 				       it.map(x=>x++Array((df.parse(x(4)).getTime/600000).toString))
 			} //mmsi, lat, lon, speed, timestamp, time
-			.map(x=>((x(0),x(5)), (x(1),x(2),x(3)))) // ((mmsi, time), (lat, lon, speed))
+			.map(x=>((x(0),x(5)), (x(1),x(2),x(3),x(4)))) // ((mmsi, time), (lat, lon, speed))
 			.groupByKey()
 			.map(x=> (x._1,(
 				Median(x._2.toList.map(y=>y._1.toDouble).toList), 
 				Median(x._2.toList.map(y=>y._2.toDouble).toList), 
-				Median(x._2.toList.map(y=>y._3.toDouble).toList) )) )
-			.map(x=> (x._1, Array(x._2._1, x._2._2, x._2._3, findHarbour(x._2._1, x._2._2))))
+				Median(x._2.toList.map(y=>y._3.toDouble).toList)
+				(x._2.map(y=>y._4).take(16)) ).take(1).mkString(","))))
+			.map(x=> (x._1, Array(x._2._1, x._2._2, x._2._3, x._2._4, findHarbour(x._2._1, x._2._2))))
 			// tuple of ((mmsi, time), Array(lat, lon, speed, harbour))
 		//orig data7.map(a=>Array(a(1), a(2),a(3),a(4),a(5),a(6)).mkString(",")).saveAsTextFile("hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/schipje.csv")
 		//orig data: mmsi timestamp lat lon speed harbour time
@@ -87,7 +88,20 @@ object AISframe
 				.reduceByKey(_+_)	
 				.filter(x=>x._1._2!="SEA" || x._1._3!="SEA") 
 				//data2.map(a=>Array(a._1,a._2.mkString(",")).mkString(",")).saveAsTextFile(outputfile)
-
+				//enters.map(a=> Array(a._1 ,a._2).mkString(",")).saveAsTextFile(outputfile);
+		
+		val entersmtijd= data3.map(x=>(x._1._1,(x._1._2, x._2)))
+				.groupByKey()
+				.map(x=>(x._1,x._2.toList
+					 	.sortWith((a,b)=>a._1<b._1)
+					 	.map(_._2)
+					 	.sliding(2)
+					 	.toArray
+					 	.filter(x=>x.length>1)))
+				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
+				.filter(x=>x._1._2(4)=="SEA"&&x._1._3(4)!="SEA" )
+				entersmtijd.map(a=> Array(a._1._1, a._1._2.mkString(","), a._1._3.mkString(",")).mkString(","))
+						.saveAsTextFile(outputfile)
 		
 		//val enters = ship_orig.flatMap(x=>x._2.map(y=>y(4))
 		//			       		.toArray.sliding(2).toArray
@@ -95,7 +109,7 @@ object AISframe
 		//			       		.map(x=>((x(0),x(1)),1)) )
 		//			       .reduceByKey(_+_)
 		//enters.map(a=> Array(a._1._1, a._1._2,a._1._3,a._2).mkString(",")).saveAsTextFile(outputfile);
-		enters.map(a=> Array(a._1 ,a._2).mkString(",")).saveAsTextFile(outputfile);
+		
 		
 
 
