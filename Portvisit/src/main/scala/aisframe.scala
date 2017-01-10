@@ -91,7 +91,7 @@ object AISframe
 				//data2.map(a=>Array(a._1,a._2.mkString(",")).mkString(",")).saveAsTextFile(outputfile)
 				//enters.map(a=> Array(a._1 ,a._2).mkString(",")).saveAsTextFile(outputfile);
 		
-		val entersmtijd= data.map(x=>(x._1._1,(x._1._2, x._2)))
+		val arrivalsmtijd= data.map(x=>(x._1._1,(x._1._2, x._2)))
 				.groupByKey()
 				.map(x=>(x._1,x._2.toList
 					 	.sortWith((a,b)=>a._1<b._1)
@@ -101,8 +101,22 @@ object AISframe
 					 	.filter(x=>x.length>1)))
 				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
 				.filter(x=>x._1._2(4)=="SEA"&&x._1._3(4)!="SEA" )
-		entersmtijd.map(a=> Array(a._1._1, a._1._2.mkString(","), a._1._3.mkString(",")).mkString(","))
+				//arrivalsmtijd.map(a=> Array(a._1._1, a._1._2.mkString(","), a._1._3.mkString(",")).mkString(","))
+						//.saveAsTextFile(outputfile)
+		val departuresmtijd= data.map(x=>(x._1._1,(x._1._2, x._2)))
+				.groupByKey()
+				.map(x=>(x._1,x._2.toList
+					 	.sortWith((a,b)=>a._1<b._1)
+					 	.map(_._2)
+					 	.sliding(2)
+					 	.toArray
+					 	.filter(x=>x.length>1)))
+				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
+				.filter(x=>x._1._2(4)!="SEA"&&x._1._3(4)=="SEA" )
+				departueressmtijd.map(a=> Array(a._1._1, a._1._2.mkString(","), a._1._3.mkString(",")).mkString(","))
 						.saveAsTextFile(outputfile)
+		
+		
 		
 		//val enters = ship_orig.flatMap(x=>x._2.map(y=>y(4))
 		//			       		.toArray.sliding(2).toArray
