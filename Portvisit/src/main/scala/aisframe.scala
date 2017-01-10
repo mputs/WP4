@@ -113,7 +113,7 @@ object AISframe
 					 	.filter(x=>x.length>1)))
 				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
 				.filter(x=>x._1._2(4)!="SEA"&&x._1._3(4)=="SEA" )
-				departueressmtijd.map(a=> Array(a._1._1, a._1._2.mkString(","), a._1._3.mkString(",")).mkString(","))
+				departuresmtijd.map(a=> Array(a._1._1, a._1._2.mkString(","), a._1._3.mkString(",")).mkString(","))
 						.saveAsTextFile(outputfile)
 		
 		
