@@ -5,6 +5,7 @@ import org.apache.spark.SparkConf
 import java.sql.Timestamp;
 import java.text._;
 import java.util.Date;
+import visitinterval._;
 
 object AISframe
 {
