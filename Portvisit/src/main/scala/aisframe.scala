@@ -19,7 +19,7 @@ object AISframe
 		val seaships = hdfsprefix + args(0)
 		//val locharbdata = hdfsprefix + args(1)
 		val rawdatafile = hdfsprefix + args(1)
-		val outputfile = hdfsprefix + args(2)
+		//val outputfile = hdfsprefix + args(2)
 		val outputfile_arr = hdfsprefix + args(2)
 		val outputfile_dep = hdfsprefix + args(2)
 		
