@@ -20,6 +20,8 @@ object AISframe
 		//val locharbdata = hdfsprefix + args(1)
 		val rawdatafile = hdfsprefix + args(1)
 		val outputfile = hdfsprefix + args(2)
+		val outputfile_arr = hdfsprefix + args(2)
+		val outputfile_dep = hdfsprefix + args(2)
 		
 		//val seaships = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/defframe6all.csv"
 		//val rawdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/2015120100*.csv.gz"
@@ -77,44 +79,67 @@ object AISframe
 		//orig data7.map(a=>Array(a(1), a(2),a(3),a(4),a(5),a(6)).mkString(",")).saveAsTextFile("hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/schipje.csv")
 		//orig data: mmsi timestamp lat lon speed harbour time
 
-		val enters = data.map(x=>(x._1._1, (x._1._2, x._2)))
-				.groupByKey()
-				.map(x=>(x._1,x._2.toList
-					 	.sortWith((a,b)=>a._1<b._1)
-					 	.map(_._2(3))
-					 	.sliding(2)
-					 	.toArray
-					 	.filter(x=>x.length>1)))
-				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
-				.reduceByKey(_+_)	
-				.filter(x=>x._1._2!="SEA" || x._1._3!="SEA") 
+		//1 val enters = data.map(x=>(x._1._1, (x._1._2, x._2)))
+		//1		.groupByKey()
+		//1		.map(x=>(x._1,x._2.toList
+		//1			 	.sortWith((a,b)=>a._1<b._1)
+		//1			 	.map(_._2(3))
+		//1			 	.sliding(2)
+		//1			 	.toArray
+		//1			 	.filter(x=>x.length>1)))
+		//1		.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
+		//1		.reduceByKey(_+_)	
+		//1		.filter(x=>x._1._2!="SEA" || x._1._3!="SEA") 
 				//data2.map(a=>Array(a._1,a._2.mkString(",")).mkString(",")).saveAsTextFile(outputfile)
 				//enters.map(a=> Array(a._1 ,a._2).mkString(",")).saveAsTextFile(outputfile);
 		
-		val arrivalsmtijd= data.map(x=>(x._1._1,(x._1._2, x._2)))
+		//1val arrivalsmtijd= data.map(x=>(x._1._1,(x._1._2, x._2)))
+		//1		.groupByKey()
+		//1		.map(x=>(x._1,x._2.toList
+		//1			 	.sortWith((a,b)=>a._1<b._1)
+		//1			 	.map(_._2)
+		//1			 	.sliding(2)
+		//1			 	.toArray
+		//1			 	.filter(x=>x.length>1)))
+		//1		.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
+		//1		.filter(x=>x._1._2(4)=="SEA"&&x._1._3(4)!="SEA" )
+		
+		val arr_MMSI_time= data.map(x=>(x._1._1,(x._1._2, x._2)))
 				.groupByKey()
-				.map(x=>(x._1,x._2.toList
-					 	.sortWith((a,b)=>a._1<b._1)
-					 	.map(_._2)
-					 	.sliding(2)
-					 	.toArray
-					 	.filter(x=>x.length>1)))
+				.map(x=>(x._1,x._2.toList.sortWith((a,b)=>a._1<b._1)
+				.sliding(2)
+				.toArray
+				.filter(x=>x.length>1)))
 				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
-				.filter(x=>x._1._2(4)=="SEA"&&x._1._3(4)!="SEA" )
+				.filter(x=>x._1._2._2(4)=="SEA"&&x._1._3._2(4)!="SEA" )
+		arr_MMSI_time.map(a=> Array(a._1._1,a._1._3._1,a._1._3._2.mkString(",")).mkString(",")).saveAsTextFile(outputfile_arr);
 				//arrivalsmtijd.map(a=> Array(a._1._1, a._1._2.mkString(","), a._1._3.mkString(",")).mkString(","))
 						//.saveAsTextFile(outputfile)
-		val departuresmtijd= data.map(x=>(x._1._1,(x._1._2, x._2)))
+		
+		val dep_MMSI_time= data.map(x=>(x._1._1,(x._1._2, x._2)))
 				.groupByKey()
-				.map(x=>(x._1,x._2.toList
-					 	.sortWith((a,b)=>a._1<b._1)
-					 	.map(_._2)
-					 	.sliding(2)
-					 	.toArray
-					 	.filter(x=>x.length>1)))
+				.map(x=>(x._1,x._2.toList.sortWith((a,b)=>a._1<b._1)
+				.sliding(2)
+				.toArray
+				.filter(x=>x.length>1)))
 				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
-				.filter(x=>x._1._2(4)!="SEA"&&x._1._3(4)=="SEA" )
-				departuresmtijd.map(a=> Array(a._1._1, a._1._2.mkString(","), a._1._3.mkString(",")).mkString(","))
-						.saveAsTextFile(outputfile)
+				.filter(x=>x._1._2._2(4)!="SEA"&&x._1._3._2(4)=="SEA" )
+		dep_MMSI_time.map(a=> Array(a._1._1,a._1._2._1,a._1._2._2.mkString(",")).mkString(",")).saveAsTextFile(outputfile_dep);
+		
+		
+		
+		//1 val departuresmtijd= data.map(x=>(x._1._1,(x._1._2, x._2)))
+		//1		.groupByKey()
+		//1		.map(x=>(x._1,x._2.toList
+		//1			 	.sortWith((a,b)=>a._1<b._1)
+		//1			 	.map(_._2)
+		//1			 	.sliding(2)
+		//1			 	.toArray
+		//1			 	.filter(x=>x.length>1)))
+		//1		.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
+		//1		.filter(x=>x._1._2(4)!="SEA"&&x._1._3(4)=="SEA" )
+		//1		departuresmtijd.map(a=> Array(a._1._1, a._1._2.mkString(","), a._1._3.mkString(",")).mkString(","))
+		//1				.saveAsTextFile(outputfile)
 		
 		
 		
