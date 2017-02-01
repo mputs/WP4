@@ -176,7 +176,7 @@ object AISframe
 		val grouped = ar.join(de)
 		val intervals = grouped.map(x=>(x._1,getvisitinterval(x._2._1, x._2._2))).filter(x=> x._2.length!=0)
 		val expandedintervals = intervals.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y),  (x._1._2, x._2(0)(0),x._2(0)(1)))))
-		febexpandedintervals.saveAsTextFile(outputfile)
+		expandedintervals.saveAsTextFile(outputfile)
 		//1 val departuresmtijd= data.map(x=>(x._1._1,(x._1._2, x._2)))
 		//1		.groupByKey()
 		//1		.map(x=>(x._1,x._2.toList
