@@ -113,7 +113,7 @@ object AISframe
 				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
 				//.filter(x=>x._1._2._2(4)=="SEA"&&x._1._3._2(4)!="SEA" )
 				.filter(x=>x._1._2._2(4)=="SEA"&&x._1._3._2(4)=="AMS" )
-		arr_MMSI_time.map(a=> Array(a._1._1, a._1._3._2, a._1._3._1).mkString(",")).saveAsTextFile(outputfile_arr);
+		arr_MMSI_time.map(a=> Array(a._1._1, a._1._3._2.mkString(","), a._1._3._1).mkString(",")).saveAsTextFile(outputfile_arr);
 				//arrivalsmtijd.map(a=> Array(a._1._1, a._1._2.mkString(","), a._1._3.mkString(",")).mkString(","))
 						//.saveAsTextFile(outputfile)
 		
