@@ -56,6 +56,49 @@ object AISframe
 			x.sortWith(_<_)(x.length/2)
 		}
 		
+		//element 0= PORT, 1 = timestamp
+		def getvisitinterval(arrivals: List[List[String]], departures: List[List[String]]):List[List[Long]] = 
+		{
+            		val iPORT = 0;
+            		val iTIMESTAMP = 1;
+			var ready = false;
+			var portvisits = List[List[Long]]()
+			//set initial arrival 
+			var arrivHarbour = arrivals(0)(iPORT);
+			var arrivTime = arrivals(0)(iTIMESTAMP).toLong;
+			var depTime = 0.toLong;
+			while(!ready)
+			{
+				var dep = departures.indexWhere(x=>x(iPORT)==arrivHarbour&&x(iTIMESTAMP).toLong>arrivTime)	
+				if (dep> -1)
+				{
+					depTime = departures(dep)(iTIMESTAMP).toLong
+					portvisits = portvisits ++ List(List(arrivTime, depTime))
+
+					var arr = arrivals.indexWhere(x=>x(1).toLong>depTime)
+					if(arr== -1) 
+					{
+						ready = true
+					}
+					else
+					{
+						arrivHarbour = arrivals(arr)(iPORT)
+						arrivTime = arrivals(arr)(iTIMESTAMP).toLong
+					}
+				}
+				else 
+				{
+					ready=true;
+				}
+			}
+			return portvisits
+		}
+
+			def expandIntervals(l: List[List[Long]]):List[Long] =
+			{
+   			 l.map(x=>(x(0) until x(1)+1).toList).flatten
+			}
+		
                //2015-10-08 22:00:00.001
 		val data = sc.textFile(rawdatafile).map(_.split(","))
 			.filter(x=>x(0)!="mmsi")
@@ -128,8 +171,13 @@ object AISframe
 				.filter(x=>x._1._2._2(4)=="AMS"&&x._1._3._2(4)=="SEA" )
 		dep_MMSI_time.map(a=> Array(a._1._1,a._1._2._1).mkString(",")).saveAsTextFile(outputfile_dep);
 		
-		
-		
+		//nieuw
+		//feb val ar = arrivals.map(x=>((x(0),x(1)),List(x(1),x(2)))).groupByKey().map(x=>(x._1,x._2.toList))
+		//feb val de = departures.map(x=>((x(0),x(1)),List(x(1),x(2)))).groupByKey().map(x=>(x._1,x._2.toList))
+		//feb val grouped = ar.join(de)
+		//feb val intervals = grouped.map(x=>(x._1,getvisitinterval(x._2._1, x._2._2))).filter(x=> x._2.length!=0)
+		//feb val expandedintervals = intervals.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y),  (x._1._2, x._2(0)(0),x._2(0)(1)))))
+		//febexpandedintervals.collect.foreach(println)
 		//1 val departuresmtijd= data.map(x=>(x._1._1,(x._1._2, x._2)))
 		//1		.groupByKey()
 		//1		.map(x=>(x._1,x._2.toList
