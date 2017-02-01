@@ -64,12 +64,12 @@ object AISframe
 			var ready = false;
 			var portvisits = List[List[Long]]()
 			//set initial arrival 
-			var arrivHarbour = arrivals(0)(iPORT);
+			var arrivPort = arrivals(0)(iPORT);
 			var arrivTime = arrivals(0)(iTIMESTAMP).toLong;
 			var depTime = 0.toLong;
 			while(!ready)
 			{
-				var dep = departures.indexWhere(x=>x(iPORT)==arrivHarbour&&x(iTIMESTAMP).toLong>arrivTime)	
+				var dep = departures.indexWhere(x=>x(iPORT)==arrivPort&&x(iTIMESTAMP).toLong>arrivTime)	
 				if (dep> -1)
 				{
 					depTime = departures(dep)(iTIMESTAMP).toLong
@@ -82,7 +82,7 @@ object AISframe
 					}
 					else
 					{
-						arrivHarbour = arrivals(arr)(iPORT)
+						arrivPort = arrivals(arr)(iPORT)
 						arrivTime = arrivals(arr)(iTIMESTAMP).toLong
 					}
 				}
@@ -156,7 +156,7 @@ object AISframe
 				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
 				//.filter(x=>x._1._2._2(4)=="SEA"&&x._1._3._2(4)!="SEA" )
 				.filter(x=>x._1._2._2(4)=="SEA"&&x._1._3._2(4)=="AMS" )
-		arr_MMSI_time.map(a=> Array(a._1._1, a._1._3._2(4), a._1._3._1).mkString(",")).saveAsTextFile(outputfile_arr);
+		arr_MMSI_time.map(a=> Array(a._1._1, a._1._3._2(4), a._1._3._1).mkString(","))//.saveAsTextFile(outputfile_arr);
 				//arrivalsmtijd.map(a=> Array(a._1._1, a._1._2.mkString(","), a._1._3.mkString(",")).mkString(","))
 						//.saveAsTextFile(outputfile)
 		
@@ -169,15 +169,14 @@ object AISframe
 				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
 				//.filter(x=>x._1._2._2(4)!="SEA"&&x._1._3._2(4)=="SEA" )
 				.filter(x=>x._1._2._2(4)=="AMS"&&x._1._3._2(4)=="SEA" )
-		dep_MMSI_time.map(a=> Array(a._1._1,a._1._2._1).mkString(",")).saveAsTextFile(outputfile_dep);
+		dep_MMSI_time.map(a=> Array(a._1._1,a._1._2._1).mkString(","))//.saveAsTextFile(outputfile_dep);
 		
-		//nieuw
-		//feb val ar = arrivals.map(x=>((x(0),x(1)),List(x(1),x(2)))).groupByKey().map(x=>(x._1,x._2.toList))
-		//feb val de = departures.map(x=>((x(0),x(1)),List(x(1),x(2)))).groupByKey().map(x=>(x._1,x._2.toList))
-		//feb val grouped = ar.join(de)
-		//feb val intervals = grouped.map(x=>(x._1,getvisitinterval(x._2._1, x._2._2))).filter(x=> x._2.length!=0)
-		//feb val expandedintervals = intervals.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y),  (x._1._2, x._2(0)(0),x._2(0)(1)))))
-		//febexpandedintervals.collect.foreach(println)
+		val ar = arr_MMSI_time.map(x=>((x(0),x(1)),List(x(1),x(2)))).groupByKey().map(x=>(x._1,x._2.toList))
+		val de = dep_MMSI_time.map(x=>((x(0),x(1)),List(x(1),x(2)))).groupByKey().map(x=>(x._1,x._2.toList))
+		val grouped = ar.join(de)
+		val intervals = grouped.map(x=>(x._1,getvisitinterval(x._2._1, x._2._2))).filter(x=> x._2.length!=0)
+		val expandedintervals = intervals.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y),  (x._1._2, x._2(0)(0),x._2(0)(1)))))
+		febexpandedintervals.saveAsTextFile(outputfile)
 		//1 val departuresmtijd= data.map(x=>(x._1._1,(x._1._2, x._2)))
 		//1		.groupByKey()
 		//1		.map(x=>(x._1,x._2.toList
