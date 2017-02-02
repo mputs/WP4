@@ -20,8 +20,8 @@ object AISframe
 		//val locharbdata = hdfsprefix + args(1)
 		val rawdatafile = hdfsprefix + args(1)
 		val outputfile = hdfsprefix + args(2)
-		val outputfile_arr = hdfsprefix + args(2)
-		val outputfile_dep = hdfsprefix + args(3)
+		//val outputfile_arr = hdfsprefix + args(2)
+		//val outputfile_dep = hdfsprefix + args(3)
 		
 		//val seaships = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/defframe6all.csv"
 		//val rawdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/2015120100*.csv.gz"
