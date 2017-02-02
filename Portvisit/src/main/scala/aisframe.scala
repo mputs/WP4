@@ -171,8 +171,8 @@ object AISframe
 				.filter(x=>x._1._2._2(4)=="AMS"&&x._1._3._2(4)=="SEA" )
 		val deps = dep_MMSI_time.map(a=> Array(a._1._1,a._1._2._1).mkString(","))//.saveAsTextFile(outputfile_dep);
 		
-		val ar = arrs.map(x=>((x(0),x(1)),List(x(1),x(2)))).groupByKey().map(x=>(x._1,x._2.toList))
-		val de = deps.map(x=>((x(0),x(1)),List(x(1),x(2)))).groupByKey().map(x=>(x._1,x._2.toList))
+		val ar = arrs.map(_.split(",")).map(x=>((x(0),x(1)),List(x(1),x(2)))).groupByKey().map(x=>(x._1,x._2.toList))
+		val de = deps.map(_.split(",")).map(x=>((x(0),x(1)),List(x(1),x(2)))).groupByKey().map(x=>(x._1,x._2.toList))
 		val grouped = ar.join(de)
 		val intervals = grouped.map(x=>(x._1,getvisitinterval(x._2._1, x._2._2))).filter(x=> x._2.length!=0)
 		val expandedintervals = intervals.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y),  (x._1._2, x._2(0)(0),x._2(0)(1)))))
