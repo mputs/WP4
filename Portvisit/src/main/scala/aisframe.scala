@@ -134,7 +134,7 @@ object AISframe
 		val de = deps.map(x=>((x(0),x(1)),List(x(1),x(2)))).groupByKey().map(x=>(x._1,x._2.toList))
 		val grouped = ar.join(de)
 		val intervals = grouped
-			.map(x=>(x._1,getvisitinterval(x._2._1, x._2._2)))
+			.map(x=>(x._1,getvisitinterval(x._2._1.map(_.map(_.toString)), x._2._2.map(_.map(_.toString)))
 			.filter(x=> x._2.length!=0)
 			.map(x=>(x._1, connectIntervals(x._2)))
 		val expandedintervals = intervals
