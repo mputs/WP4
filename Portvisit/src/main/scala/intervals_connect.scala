@@ -23,13 +23,4 @@ object intervals_connect
 			return List(): List[List[Long]]
 	}
 
-	def main(args: Array[String])
-	{
-		val l = List(List(1L,2L), List(3L,4L), List(6L,7L), List(9L,10L), List(11L,13L), List(17L,20L))
-		println("original list: ")
-		l.foreach(println)
-		println("connected: ")
-		connectIntervals(l).foreach(println)
-		
-	}
 }
