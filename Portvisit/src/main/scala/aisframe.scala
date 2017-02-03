@@ -101,55 +101,45 @@ object AISframe
 			}
 		
                //2015-10-08 22:00:00.001
-		val data = sc.textFile(rawdatafile).map(_.split(","))
-			.filter(x=>x(0)!="mmsi")
-			//.filter(x=>x(0)=="374846000")
-			.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(","))) // mmsi, lat, lon, speed, timestamp 
-			.join(seashiplist)
-			.map(x => x._2._1.split(","))
-			.mapPartitions{it =>
-				       val df = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-				       it.map(x=>x++Array((df.parse(x(4)).getTime/600000).toString))
-			} //mmsi, lat, lon, speed, timestamp, time
-			.map(x=>((x(0),x(5)), (x(1),x(2),x(3),x(4)))) // ((mmsi, time), (lat, lon, speed))
-			.groupByKey()
-			.map(x=> (x._1,(
-				Median(x._2.toList.map(y=>y._1.toDouble).toList), 
-				Median(x._2.toList.map(y=>y._2.toDouble).toList), 
-				Median(x._2.toList.map(y=>y._3.toDouble).toList),
-				(x._2.map(y=>y._4).take(16) ).take(1).mkString(","))))
-			.map(x=> (x._1, Array(x._2._1, x._2._2, x._2._3, x._2._4, findHarbour(x._2._1, x._2._2))))
-			// tuple of ((mmsi, time), Array(lat, lon, speed, harbour))
-		//orig data7.map(a=>Array(a(1), a(2),a(3),a(4),a(5),a(6)).mkString(",")).saveAsTextFile("hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/schipje.csv")
+		val data = sc.textFile(rawdatafile)
+				.map(_.split(","))
+				.filter(x=>x(0)!="mmsi")
+				.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
+				.join(seashiplist)
+				.map(x => x._2._1.split(","))
+				.mapPartitions {
+					it => val df = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
+					it.map(x=>x++Array((df.parse(x(4)).getTime/600000).toString)) }
+				.map(x=>((x(0),x(5)), (x(1),x(2),x(3),x(4))))
+				.groupByKey()
+				.map(x=> (x._1,(
+					Median(x._2.toList.map(y=>y._1.toDouble).toList), 
+					Median(x._2.toList.map(y=>y._2.toDouble).toList), 
+					Median(x._2.toList.map(y=>y._3.toDouble).toList), 
+					(x._2.map(y=>y._4).take(16) )
+					.take(1).mkString(",")))) 
+				.map(x=> (x._1, Array(x._2._1, x._2._2, x._2._3, x._2._4, findHarbour(x._2._1, x._2._2))))
+		// tuple of ((mmsi, time), Array(lat, lon, speed, harbour))
 		//orig data: mmsi timestamp lat lon speed harbour time
+		
+		val arrdep = data.map(x=>(x._1._1,(x._1._2, x._2)))
+			.groupByKey()
+			.map(x=>(x._1,x._2.toList.sortWith((a,b)=>a._1<b._1).sliding(2).toArray.filter(x=>x.length>1)))
+			.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
 
-		
-		val arr_MMSI_time= data.map(x=>(x._1._1,(x._1._2, x._2)))
-				.groupByKey()
-				.map(x=>(x._1,x._2.toList.sortWith((a,b)=>a._1<b._1)
-				.sliding(2)
-				.toArray
-				.filter(x=>x.length>1)))
-				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
-				//.filter(x=>x._1._2._2(4)=="SEA"&&x._1._3._2(4)!="SEA" )
-				.filter(x=>x._1._2._2(4)=="SEA"&&x._1._3._2(4)=="AMS" )
-		val arrs = arr_MMSI_time.map(a=> Array(a._1._1, a._1._3._2(4), a._1._3._1));
-		
-		val dep_MMSI_time= data.map(x=>(x._1._1,(x._1._2, x._2)))
-				.groupByKey()
-				.map(x=>(x._1,x._2.toList.sortWith((a,b)=>a._1<b._1)
-				.sliding(2)
-				.toArray
-				.filter(x=>x.length>1)))
-				.flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
-				.filter(x=>x._1._2._2(4)=="AMS"&&x._1._3._2(4)=="SEA" )
-		val deps = dep_MMSI_time.map(a=> Array(a._1._1,a._1._2._1));
-		
+		arrdep.cache()
+		val arrs = arrdep.filter(x=>x._1._2._2(4)=="SEA"&&x._1._3._2(4)!="SEA" ).map(a=> Array(a._1._1, a._1._3._2(4), a._1._3._1))
+		val deps = arrdep.filter(x=>x._1._2._2(4)!="SEA"&&x._1._3._2(4)=="SEA" ).map(a=> Array(a._1._1, a._1._2._2(4), a._1._3._1))
 		val ar = arrs.map(x=>((x(0),x(1)),List(x(1),x(2)))).groupByKey().map(x=>(x._1,x._2.toList))
 		val de = deps.map(x=>((x(0),x(1)),List(x(1),x(2)))).groupByKey().map(x=>(x._1,x._2.toList))
 		val grouped = ar.join(de)
-		val intervals = grouped.map(x=>(x._1,getvisitinterval(x._2._1, x._2._2))).filter(x=> x._2.length!=0).map(x=>(x._1, connectIntervals(x._2)))
-		val expandedintervals = intervals.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y),  (x._1._2, x._2(0)(0),x._2(0)(1))))).saveAsTextFile(outputfile)
+		val intervals = grouped
+			.map(x=>(x._1,getvisitinterval(x._2._1, x._2._2)))
+			.filter(x=> x._2.length!=0)
+			.map(x=>(x._1, connectIntervals(x._2)))
+		val expandedintervals = intervals
+			.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y),  (x._1._2, x._2(0)(0),x._2(0)(1)))))
+			.saveAsTextFile(outputfile)
 
 		sc.stop()
 	}
