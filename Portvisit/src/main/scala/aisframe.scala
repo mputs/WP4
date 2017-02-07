@@ -143,7 +143,7 @@ object AISframe
 		//.saveAsTextFile(outputfile1)
 		
 		val raws = rawdata.map(x=>(x._1,List(x._2)))//.saveAsTextFile(outputfile2)
-		val exp_int_compl = raws.join(expandedintervals).saveAsTextFile(outputfile)//expandedintervals.join(raws).saveAsTextFile(outputfile2)
+		val exp_int_compl = expandedintervals.join(raws).saveAsTextFile(outputfile)
 			
 
 		sc.stop()
