@@ -112,7 +112,7 @@ object AISframe
 					it => val df = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
 					it.map(x=>x++Array((df.parse(x(4)).getTime/600000).toString)) }
 				.map(x=>((x(0),x(5)), (x(1),x(2),x(3),x(4))))
-				.groupByKey().saveAsTextFile(outputfile2)
+				.groupByKey()
 		val data = rawdata
 				.map(x=> (x._1,(
 					Median(x._2.toList.map(y=>y._1.toDouble).toList), 
@@ -142,9 +142,10 @@ object AISframe
 		val expandedintervals = intervals
 			.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y.toString),  (x._1._2, x._2(0)(0),x._2(0)(1))))).groupByKey().map(x=>(x._1.toString,x._2.toList))
 		.saveAsTextFile(outputfile1)
+		rawdata.saveAsTextFile(outputfile2)
 		val raws = rawdata.map(x=>(x._1,x._2.toList))
 		//val exp_int_compl = expandedintervals.join(raws)
-			//.saveAsTextFile(outputfile2)
+			
 
 		sc.stop()
 	}
