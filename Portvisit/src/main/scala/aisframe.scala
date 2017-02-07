@@ -20,7 +20,8 @@ object AISframe
 		val seaships = hdfsprefix + args(0)
 		//val locharbdata = hdfsprefix + args(1)
 		val rawdatafile = hdfsprefix + args(1)
-		val outputfile = hdfsprefix + args(2)
+		val outputfile1 = hdfsprefix + args(2)
+		val outputfile2 = hdfsprefix + args(3)
 		//val outputfile_arr = hdfsprefix + args(2)
 		//val outputfile_dep = hdfsprefix + args(3)
 		
@@ -139,10 +140,10 @@ object AISframe
 			.map(x=>(x._1, connectIntervals(x._2)))
 		val expandedintervals = intervals
 			.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y.toString),  (x._1._2, x._2(0)(0),x._2(0)(1))))).groupByKey().map(x=>(x._1.toString,x._2.toList))
-
+		.saveAsTextFile(outputfile1)
 		val raws = rawdata.map(x=>((x(0),x(5)),(x(1),x(2), x(3),x(4)))).groupByKey().map(x=>(x._1.toString,x._2.toList))
-		val exp_int_compl = expandedintervals.join(raws)
-			.saveAsTextFile(outputfile)
+		//val exp_int_compl = expandedintervals.join(raws)
+			.saveAsTextFile(outputfile2)
 
 		sc.stop()
 	}
