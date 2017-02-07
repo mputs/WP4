@@ -101,7 +101,7 @@ object AISframe
 			}
 		
                //2015-10-08 22:00:00.001
-		val data = sc.textFile(rawdatafile)
+		val rawdata = sc.textFile(rawdatafile)
 				.map(_.split(","))
 				.filter(x=>x(0)!="mmsi")
 				.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
@@ -110,7 +110,7 @@ object AISframe
 				.mapPartitions {
 					it => val df = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
 					it.map(x=>x++Array((df.parse(x(4)).getTime/600000).toString)) }
-				.map(x=>((x(0),x(5)), (x(1),x(2),x(3),x(4))))
+		val data = rawdata.map(x=>((x(0),x(5)), (x(1),x(2),x(3),x(4))))
 				.groupByKey()
 				.map(x=> (x._1,(
 					Median(x._2.toList.map(y=>y._1.toDouble).toList), 
@@ -140,7 +140,7 @@ object AISframe
 		val expandedintervals = intervals
 			.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y),  (x._1._2, x._2(0)(0),x._2(0)(1)))))
 		
-		val raws = data.map(x=>((x(0),x(5)),(x(1),x(2), x(3),x(4)))).groupByKey().map(x=>(x._1,x._2.toList))
+		val raws = rawdata.map(x=>((x(0),x(5)),(x(1),x(2), x(3),x(4)))).groupByKey().map(x=>(x._1,x._2.toList))
 		val exp_int_compl = expandedintervals.join(raws)
 			.saveAsTextFile(outputfile)
 
