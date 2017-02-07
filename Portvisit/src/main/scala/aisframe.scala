@@ -112,8 +112,7 @@ object AISframe
 					it => val df = new SimpleDateFormat("yyyy-MM-dd HH:mm"); 
 					it.map(x=>x++Array((df.parse(x(4)).getTime/600000).toString)) }
 				.map(x=>((x(0),x(5)), (x(1),x(2),x(3),x(4))))
-				.groupByKey()
-		val data = rawdata
+		val data = rawdata.groupByKey()
 				.map(x=> (x._1,(
 					Median(x._2.toList.map(y=>y._1.toDouble).toList), 
 					Median(x._2.toList.map(y=>y._2.toDouble).toList), 
