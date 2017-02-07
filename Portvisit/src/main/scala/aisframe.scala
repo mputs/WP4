@@ -140,8 +140,8 @@ object AISframe
 		val expandedintervals = intervals
 			.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y.toString),  (x._1._2, x._2(0)(0),x._2(0)(1))))).groupByKey().map(x=>(x._1.toString,x._2.toList))
 
-		val raws = rawdata.map(x=>((x(0),x(5)),(x(1),x(2), x(3),x(4)))).groupByKey().map(x=>(x._1,x._2.toList))
-		val exp_int_compl = expandedintervals.join(raws)
+		//val raws = rawdata.map(x=>((x(0),x(5)),(x(1),x(2), x(3),x(4)))).groupByKey().map(x=>(x._1,x._2.toList))
+		//val exp_int_compl = expandedintervals.join(raws)
 			.saveAsTextFile(outputfile)
 
 		sc.stop()
