@@ -8,14 +8,7 @@ import org.apache.spark.SparkConf
 
 object AISframe
 {
-	
-	def findArea(lat: Double, lon: Double): String =
-		{
-  			val x = brArea.value
-    				.filter(x=>x(1).toDouble<lat&x(2).toDouble>lat&x(3).toDouble<lon&x(4).toDouble>lon).map(x=>x(0));
-  			return (if (x.length==0) "SEA" else x(0))
-		}
-	
+		
         
 	def main(args: Array[String])
 	{
@@ -45,6 +38,13 @@ object AISframe
 		conf.setAppName("AIS-frame")
 		conf.setMaster("yarn-client")
 		val sc = new SparkContext(conf)
+		
+		def findArea(lat: Double, lon: Double): String =
+			{
+  			val x = brArea.value
+    				.filter(x=>x(1).toDouble<lat&x(2).toDouble>lat&x(3).toDouble<lon&x(4).toDouble>lon).map(x=>x(0));
+  			return (if (x.length==0) "SEA" else x(0))
+			}
 
 		val rawdata = sc.textFile(locdatafile).map(_.split(","))
 							.filter(x=>x(0)!="mmsi")
