@@ -28,16 +28,16 @@ object AISframe
 		//val locdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/20151101*.csv.gz"
 		//val outputfile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/AMS_1dec.csv"
 		
+		val conf = new SparkConf()
+		conf.setAppName("AIS-frame")
+		conf.setMaster("yarn-client")
+		val sc = new SparkContext(conf)
 		
 		val LocArea = sc.textFile(locAreadata).map(_.split(",")).collect()
 		val brArea = sc.broadcast(LocArea)
 		val seashiplist = sc.textFile(seaships).map(_.split(",")).map(x => (x(0), x(2).mkString(",")))
 		
-		
-		val conf = new SparkConf()
-		conf.setAppName("AIS-frame")
-		conf.setMaster("yarn-client")
-		val sc = new SparkContext(conf)
+			
 		
 		def findArea(lat: Double, lon: Double): String =
 			{
