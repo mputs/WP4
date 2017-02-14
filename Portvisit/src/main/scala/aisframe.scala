@@ -7,6 +7,7 @@ import java.text._;
 import java.util.Date;
 import visitinterval._;
 import intervals_connect._
+import org.apache.spark.sql.functions._ 
 
 object AISframe
 {
@@ -18,29 +19,17 @@ object AISframe
 		
 		val hdfsprefix = "hdfs://namenode.ib.sandbox.ichec.ie:8020/" 
 		val seaships = hdfsprefix + args(0)
-		//val locharbdata = hdfsprefix + args(1)
-		val rawdatafile = hdfsprefix + args(1)
-		val outputfile = hdfsprefix + args(2)
-		//val outputfile2 = hdfsprefix + args(3)
-		//val outputfile_arr = hdfsprefix + args(2)
-		//val outputfile_dep = hdfsprefix + args(3)
-		
-		//val seaships = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/defframe6all.csv"
-		//val rawdatafile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/datasets/AIS/Locations/2015120100*.csv.gz"
-		//val outputfile = "hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/qtest.csv"
-
+		val locharbdata = hdfsprefix + args(1)
+		val rawdatafile = hdfsprefix + args(2)
+		val outputfile = hdfsprefix + args(3)
 
 		val conf = new SparkConf()
 		conf.setAppName("Portvisit")
 		conf.setMaster("yarn-client")
 		val sc = new SparkContext(conf)
 		
-		//val seashipdata = sc.textFile(seaships)
-		//	.map(_.split(","))
-			//.filter(x => x(2)=="1")
-		
 		//val LocHarb = io.Source.fromFile("ports_locations.csv").getLines.map(_.split(",")).toArray
-		val LocHarb = sc.textFile("hdfs://namenode.ib.sandbox.ichec.ie:8020/user/tessadew/ports_locations.csv").map(_.split(",")).collect()
+		val LocHarb = sc.textFile(locharbdata).map(_.split(",")).collect()
 		val brLocHarb = sc.broadcast(LocHarb)
 		
 		def findHarbour(lat: Double, lon: Double): String =
@@ -139,11 +128,13 @@ object AISframe
 			.filter(x=> x._2.length!=0)
 			.map(x=>(x._1, connectIntervals(x._2)))
 		val expandedintervals = intervals
-			.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y.toString),  (x._1._2, x._2(0)(0),x._2(0)(1))))).groupByKey().map(x=>(x._1.toString,x._2.toList))
-		//.saveAsTextFile(outputfile1)
+			//.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y.toString),  (x._1._2, x._2(0)(0),x._2(0)(1))))).groupByKey().map(x=>(x._1.toString,x._2.toList))
+			.flatMap(x=>x._2.flatMap(y=>(y(0) until y(1)+1).toList.map(z=>((x._1._1.toString, z.toString), (x._1._2, y.mkString(","))))))
 		
-		val raws = rawdata.map(x=>(x._1.toString,List(x._2)))hjvkfsLV//.saveAsTextFile(outputfile2)
-		val exp_int_compl = expandedintervals.join(raws).filter(x=>x._3._4<30).groupByKey().saveAsTextFile(outputfile)
+		
+		//val arrdep2 = data.map(x=>(x._1.toString,List(x._2)))
+		val arrdep2 = data.map(x=>(x._1,(x._2(0), x._2(1),x._2(2), x._2(4))))
+		val exp_int_compl = expandedintervals.join(arrdep2).saveAsTextFile(outputfile)
 			
 
 		sc.stop()
