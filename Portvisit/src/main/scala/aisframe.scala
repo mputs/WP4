@@ -7,7 +7,7 @@ import java.text._;
 import java.util.Date;
 import visitinterval._;
 import intervals_connect._
-//import org.apache.spark.sql.functions._ 
+import org.apache.spark.sql.functions._ 
 
 object AISframe
 {
