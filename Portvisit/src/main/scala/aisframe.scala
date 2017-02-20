@@ -136,7 +136,7 @@ object AISframe
 		val arrdep2 = data.map(x=>(x._1,(x._2(0), x._2(1),x._2(2), x._2(4))))
 		val exp_int_compl = expandedintervals.join(arrdep2)
 		val int_speed = exp_int_compl.map(x=> ((x._1._1,x._2._1._2),(x._2._2._3))).groupByKey()
-		val stops = int_speed.filter(x=>(x._2.toList.count(_.asInstanceOf[Double]<0.9))>1).map(x=>Array(x._1,x._2)).saveAsTextFile(outputfile)
+		val stops = int_speed.filter(x=>(x._2.toList.count(_.asInstanceOf[Double]<0.9))>1).map(x=>Array(x._1,x._2.mkString(","))).saveAsTextFile(outputfile)
 			
 
 		sc.stop()
