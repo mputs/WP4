@@ -129,7 +129,7 @@ object AISframe
 			.map(x=>(x._1, connectIntervals(x._2)))
 
 		
-		/val expandedintervals = intervals
+		val expandedintervals = intervals
 			//.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y.toString),  (x._1._2, x._2(0)(0),x._2(0)(1))))).groupByKey().map(x=>(x._1.toString,x._2.toList))
 			.flatMap(x=>x._2.flatMap(y=>(y(0) until y(1)+1).toList.map(z=>((x._1._1.toString, z.toString), (x._1._2, y.mkString(","))))))
 		
