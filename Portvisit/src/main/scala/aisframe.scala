@@ -127,17 +127,22 @@ object AISframe
 			.map(x=>(x._1,getvisitinterval(x._2._1.map(_.map(_.toString)), x._2._2.map(_.map(_.toString)))))
 			.filter(x=> x._2.length!=0)
 			.map(x=>(x._1, connectIntervals(x._2)))
-		val expandedintervals = intervals
+
+		
+		/val expandedintervals = intervals
 			//.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y.toString),  (x._1._2, x._2(0)(0),x._2(0)(1))))).groupByKey().map(x=>(x._1.toString,x._2.toList))
 			.flatMap(x=>x._2.flatMap(y=>(y(0) until y(1)+1).toList.map(z=>((x._1._1.toString, z.toString), (x._1._2, y.mkString(","))))))
 		
-		
-		//val arrdep2 = data.map(x=>(x._1.toString,List(x._2)))
-		val arrdep2 = data.map(x=>(x._1,(x._2(0), x._2(1),x._2(2), x._2(4))))
-		val exp_int_compl = expandedintervals.join(arrdep2)
-		val int_speed = exp_int_compl.map(x=> ((x._1._1,x._2._1._2),(x._2._2._3))).groupByKey()
-		val stops = int_speed.filter(x=>(x._2.toList.count(_.asInstanceOf[Double]<0.9))>1).map(x=>x._1 + "," + x._2.mkString(",")).saveAsTextFile(outputfile)
+		//bewaren
+		//bewaren //val arrdep2 = data.map(x=>(x._1.toString,List(x._2)))
+		//bewaren val arrdep2 = data.map(x=>(x._1,(x._2(0), x._2(1),x._2(2), x._2(4))))
+		//bewaren val exp_int_compl = expandedintervals.join(arrdep2)
+		//bewaren val int_speed = exp_int_compl.map(x=> ((x._1._1,x._2._1._2),(x._2._2._3))).groupByKey()
+		//bewaren val stops = int_speed.filter(x=>(x._2.toList.count(_.asInstanceOf[Double]<0.9))>1).map(x=>x._1 + "," + x._2.mkString(",")).saveAsTextFile(outputfile)
 			
+		val arrdep2 = data2.map(x=>(x._1,(x._2(0), x._2(1),x._2(2), x._2(4))))
+		val exp_int_compl = expendedintervals.join(arrdep2)
+		val int_speed = exp_int_compl.map(x=> ((x._1._1,x._2._1._2),(x._2._2._1),(x._2._2._2),(x._2._2._3),(x._1._2))).saveAsTextFile(outputfile)
 
 		sc.stop()
 	}
