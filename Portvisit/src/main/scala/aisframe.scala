@@ -108,7 +108,7 @@ object AISframe
 					Median(x._2.toList.map(y=>y._3.toDouble).toList), 
 					(x._2.map(y=>y._4).take(16) )
 					.take(1).mkString(",")))) 
-				.map(x=> (x._1, Array(x._2._1, x._2._2, x._2._3, x._2._4, findHarbour(x._2._1, x._2._2)))).saveAsTextFile(outputfile)
+				.map(x=> (x._1, Array(x._2._1, x._2._2, x._2._3, x._2._4, findHarbour(x._2._1, x._2._2)).mkString(","))).saveAsTextFile(outputfile)
 
 		// tuple of ((mmsi, time), Array(lat, lon, speed, harbour))
 		//orig data: mmsi timestamp lat lon speed harbour time
