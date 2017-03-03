@@ -93,7 +93,7 @@ object AISframe
                //2015-10-08 22:00:00.001
 		val rawdata = sc.textFile(rawdatafile)
 				.map(_.split(","))
-				.filter(x=>x(0)=="258763000")
+				.filter(x=>x(0)=="376819000")
 				.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
 				.join(seashiplist)
 				.map(x => x._2._1.split(","))
@@ -145,7 +145,7 @@ object AISframe
 		//val exp_int_compl = expandedintervals.join(arrdep2)
 		//val int_speed = exp_int_compl.map(x=> ((x._1._1,x._2._1._2),(x._2._2._1),(x._2._2._2),(x._2._2._3),(x._2._2._4))).saveAsTextFile(outputfile)
 
-		//sc.stop()
+		sc.stop()
 	}
 }
 
