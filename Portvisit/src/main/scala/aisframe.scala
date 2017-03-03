@@ -93,7 +93,7 @@ object AISframe
                //2015-10-08 22:00:00.001
 		val rawdata = sc.textFile(rawdatafile)
 				.map(_.split(","))
-				.filter(x=>x(0)=="376819000")
+				.filter(x=>x(0)!="mmsi")
 				.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
 				.join(seashiplist)
 				.map(x => x._2._1.split(","))
