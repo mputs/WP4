@@ -93,7 +93,7 @@ object AISframe
                //2015-10-08 22:00:00.001
 		val rawdata = sc.textFile(rawdatafile)
 				.map(_.split(","))
-				.filter(x=>x(0)!="mmsi")
+				.filter(x=>x(0)=="258763000")
 				.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkString(",")))
 				.join(seashiplist)
 				.map(x => x._2._1.split(","))
@@ -108,7 +108,7 @@ object AISframe
 					Median(x._2.toList.map(y=>y._3.toDouble).toList), 
 					(x._2.map(y=>y._4).take(16) )
 					.take(1).mkString(",")))) 
-				.map(x=> (x._1, Array(x._2._1, x._2._2, x._2._3, x._2._4, findHarbour(x._2._1, x._2._2)).mkString(","))).filter(x=>x._2.toString.contains("AMS")).saveAsTextFile(outputfile)
+				.map(x=> (x._1, Array(x._2._1, x._2._2, x._2._3, x._2._4, findHarbour(x._2._1, x._2._2)))).saveAsTextFile(outputfile)
 
 		// tuple of ((mmsi, time), Array(lat, lon, speed, harbour))
 		//orig data: mmsi timestamp lat lon speed harbour time
