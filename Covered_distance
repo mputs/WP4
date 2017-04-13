@@ -101,7 +101,7 @@ val data = rawdatafile.map(x => (x(0), Array(x(0), x(1), x(2), x(4), x(8)).mkStr
 				       it.map(x=>x++Array((df.parse(x(4)).getTime/600000).toString))
 			} 
       
- val data2 = data.map(x=>((x(0),x(5)), (x(1),x(2),x(3),x(4)))).groupByKey().map(x=> (x._1,(Median(x._2.toList.map(y=>y._1.toDouble).toList), Median(x._2.toList.map(y=>y._2.toDouble).toList), Median(x._2.toList.map(y=>y._3.toDouble).toList),(x._2.map(y=>y._4).take(16) ).take(1).mkString(",")))).map(x=> (x._1, Array(x._2._1, x._2._2, x._2._3, x._2._4, findHarbour(x._2._1, x._2._2))))
+val data2 = data.map(x=>((x(0),x(5)), (x(1),x(2),x(3),x(4)))).groupByKey().map(x=> (x._1,(Median(x._2.toList.map(y=>y._1.toDouble).toList), Median(x._2.toList.map(y=>y._2.toDouble).toList), Median(x._2.toList.map(y=>y._3.toDouble).toList),(x._2.map(y=>y._4).take(16) ).take(1).mkString(",")))).map(x=> (x._1, Array(x._2._1, x._2._2, x._2._3, x._2._4, findHarbour(x._2._1, x._2._2))))
 val arrdep = data2.map(x=>(x._1._1,(x._1._2, x._2))).groupByKey().map(x=>(x._1,x._2.toList.sortWith((a,b)=>a._1<b._1).sliding(2).toArray.filter(x=>x.length>1))).flatMap(x=>x._2.map(y=>((x._1,y(0),y(1)),1)))
 
 val arrs = arrdep.filter(x=>x._1._2._2(4)=="SEA"&&x._1._3._2(4)!="SEA" ).map(a=> Array(a._1._1, a._1._3._2(4), a._1._3._1))
@@ -113,13 +113,17 @@ val grouped = ar.join(de)
 // ((mmsi, port), List(List(begin, end),..)
 val intervals = grouped.map(x=>(x._1,getvisitinterval(x._2._1.map(_.map(_.toString)), x._2._2.map(_.map(_.toString))))).filter(x=> x._2.length!=0).map(x=>(x._1, connectIntervals(x._2)))
 
-// ((mmsi,time), (port, begin, end))
-val expendedintervals = intervals.flatMap(x=>x._2.flatMap(y=>(y(0) until y(1)+1).toList.map(z=>((x._1._1.toString, z.toString), (x._1._2, y.mkString(","))))))
+val expandedintervals = intervals.flatMap(x=>expandIntervals(x._2).map(y=>((x._1._1, y.toString),  (x._1._2, x._2(0)(0),x._2(0)(1))))).groupByKey().map(x=>(x._1.toString,x._2.toList))
+
 
 val arrdep2 = data2.map(x=>(x._1,(x._2(0), x._2(1),x._2(2), x._2(3))))
 val exp_int_compl = expendedintervals.join(arrdep2)
-val int_speed = exp_int_compl.map(x=> ((x._1._1,x._2._1._2),(x._2._2._1),(x._2._2._2),(x._2._2._3),(x._1._2)))
-
-val distance = List(haversineDistance ((50.0359,5.4253),(58.3838,3.0412))).mkString(",")
-//.map(x=>(haversineDistance((x._1._1.asInstanceOf[Double],x._1._2.asInstanceOf[Double]),(x._1._1.asInstanceOf[Double],x._1._2.asInstanceOf[Double]))))))//.filter(x=>x.length>1)))
-val distance2= int_speed.map(x=>(x._1,(x._5, x._2, x._3))).groupByKey().map(x=>(List(x._1),x._2.toList.sortWith((a,b)=>a._1<b._1).map(l=>List(l._1,l._2,l._3)).flatMap(fm=>fm)))
+val int_speed = exp_int_compl.map(x=> ((x._1._1,x._2._1._2),(x._2._2._1),(x._2._2._2),(x._2._2._3),(x._1._2)))//.saveAsTextFile(outputfile)
+val distance2= int_speed.map(x=>(x._1,(x._5, x._2, x._3))).groupByKey().map(x=>(List(x._1),x._2.toList.sortWith((a,b)=>a._1<b._1).map(l=>List(l._1,l._2,l._3))))
+val distance3 = distance2.map(q=>(q._1,q._2.sliding(2).toList.map(x=>haversineDistance((x(0)(2).asInstanceOf[Double],x(0)(1).asInstanceOf[Double]), 
+                                                    (x(1)(2).asInstanceOf[Double],x(1)(1).asInstanceOf[Double]))).sum))
+						    
+def tuple3ToList[T](t: (T,T,T)): List[T] = List(t._1, t._2,t._3)
+val arrdep3 = data2.map(x=>(x._1.toString,(x._2(0), x._2(1),x._2(2), x._2(3))))
+val exp_int_compl = expandedintervals.join(arrdep3)
+val int_speed = exp_int_compl.map(x=> (x._1.split(",")(0).substring(1)::tuple3ToList(x._2._1(0)),x._2._2))//.groupByKey()						    
