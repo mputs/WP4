@@ -186,5 +186,5 @@ val stops = int_speed2.filter(x=>(x._2.sliding(1).toList.map(x=>(x(0)(3))).count
 			
 
 		sc.stop()
-	}
+	
 }
