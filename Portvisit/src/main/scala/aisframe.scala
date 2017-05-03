@@ -167,7 +167,7 @@ val expandedintervals = intervals
 		.map(x=>(x._1.toString,x._2.toList))
 
 
-val arrdep2 = data2.map(x=>(x._1,(x._2(0), x._2(1),x._2(2), x._2(3))))
+val arrdep2 = data.map(x=>(x._1,(x._2(0), x._2(1),x._2(2), x._2(3))))
 val exp_int_compl = expendedintervals.join(arrdep2)
 val int_speed = exp_int_compl.map(x=> ((x._1._1,x._2._1._2),(x._2._2._1),(x._2._2._2),(x._2._2._3),(x._1._2)))//.saveAsTextFile(outputfile)
 val distance2= int_speed.map(x=>(x._1,(x._5, x._2, x._3)))
@@ -176,13 +176,13 @@ val distance3 = distance2.map(q=>(q._1,q._2.sliding(2).toList.map(x=>haversineDi
                                                     (x(1)(2).asInstanceOf[Double],x(1)(1).asInstanceOf[Double]))).sum))
 						    
 def tuple3ToList[T](t: (T,T,T)): List[T] = List(t._1, t._2,t._3)
-val arrdep3 = data2.map(x=>(x._1.toString,(x._2(0), x._2(1),x._2(2), x._2(3))))
-val exp_int_compl = expandedintervals.join(arrdep3)
-val int_speed = exp_int_compl.map(x=> (x._1.split(",")(0).substring(1)::tuple3ToList(x._2._1(0)),x._2._2)).groupByKey().map(x=>(x._1,x._2.toList.sortWith((a,b)=>a._1<b._1).map(l=>List(l._1,l._2,l._3,l._4, l._5))))
+val arrdep3 = data.map(x=>(x._1.toString,(x._2(0), x._2(1),x._2(2), x._2(3))))
+val exp_int_compl2 = expandedintervals.join(arrdep3)
+val int_speed2 = exp_int_compl2.map(x=> (x._1.split(",")(0).substring(1)::tuple3ToList(x._2._1(0)),x._2._2)).groupByKey().map(x=>(x._1,x._2.toList.sortWith((a,b)=>a._1<b._1).map(l=>List(l._1,l._2,l._3,l._4, l._5))))
 
-val dist = int_speed.map(q=>(q._1,q._2.sliding(2).toList.map(x=>haversineDistance((x(0)(2).asInstanceOf[Double],x(0)(1).asInstanceOf[Double]), 
+val dist = int_speed2.map(q=>(q._1,q._2.sliding(2).toList.map(x=>haversineDistance((x(0)(2).asInstanceOf[Double],x(0)(1).asInstanceOf[Double]), 
                                                     (x(1)(2).asInstanceOf[Double],x(1)(1).asInstanceOf[Double]))).sum,q._2.sliding(1).toList.map(x=>(x(0)(1).asInstanceOf[Double],x(0)(3).asInstanceOf[Double]))))//.saveAsTextFile(outputfile)
-val stops = int_speed.filter(x=>(x._2.sliding(1).toList.map(x=>(x(0)(3))).count(_.asInstanceOf[Double]>0.9))>1).saveAsTextFile(outputfile)//.map(x=> x._1 + ""+x._2.mkString(","))
+val stops = int_speed2.filter(x=>(x._2.sliding(1).toList.map(x=>(x(0)(3))).count(_.asInstanceOf[Double]>0.9))>1).saveAsTextFile(outputfile)//.map(x=> x._1 + ""+x._2.mkString(","))
 			
 
 		sc.stop()
