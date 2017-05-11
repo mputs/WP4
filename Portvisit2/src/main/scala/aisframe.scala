@@ -140,7 +140,7 @@ object AISframe
 				.map(x=> (x._1, Array(x._2._1, x._2._2, x._2._3, x._2._4, findHarbour(x._2._1, x._2._2))))
 		// tuple of ((mmsi, time), Array(lat, lon, speed, harbour))
 		//orig data: mmsi timestamp lat lon speed harbour time
-		
+	
 		val arrdep = data.map(x=>(x._1._1,(x._1._2, x._2)))
 			.groupByKey()
 			.map(x=>(x._1,x._2.toList.sortWith((a,b)=>a._1<b._1).sliding(2).toArray.filter(x=>x.length>1)))
@@ -175,8 +175,11 @@ val distance3 = distance2.map(q=>(q._1,q._2.sliding(2).toList.map(x=>haversineDi
                                                     (x(1)(2).asInstanceOf[Double],x(1)(1).asInstanceOf[Double]))).sum))
 						    
 def tuple3ToList[T](t: (T,T,T)): List[T] = List(t._1, t._2,t._3)
-val arrdep3 = data.map(x=>(x._1.toString,(x._2(0), x._2(1),x._2(2), x._2(3))))
+//val arrdep3 = data.map(x=>(x._1.toString,(x._2(0), x._2(1),x._2(2), x._2(3))))
+val arrdep3 = data.map(x=>(x._1.toString,(x._1._2,x._2(0), x._2(1),x._2(2), x._2(3))))
 val exp_int_compl2 = expandedintervals.join(arrdep3)
+
+
 val int_speed2 = exp_int_compl2.map(x=> (x._1.split(",")(0).substring(1)::tuple3ToList(x._2._1(0)),x._2._2)).groupByKey().map(x=>(x._1,x._2.toList.sortWith((a,b)=>a._1<b._1).map(l=>List(l._1,l._2,l._3,l._4, l._5))))
 
 val dist = int_speed2.map(q=>(q._1,q._2.sliding(2).toList.map(x=>haversineDistance((x(0)(2).asInstanceOf[Double],x(0)(1).asInstanceOf[Double]), 
