@@ -17,7 +17,7 @@ object AIStest
 		val data = sc.textFile(tfiles);
 		val data1 = data.map(_.split(","));
 		val data2 = data1.filter(x => x(0)=="244670084");
-		data2.map(_.mkString(",")).saveAsTextFile("file:///~/WP4/output")
+		data2.map(_.mkString(",")).coalesce(1,true).saveAsTextFile("file:///~/WP4/output")
 		//data2.map(_.mkString(",")).coalesce(1,true).saveAsTextFile("file://~/WP4/output")
 		//println ("Lines in dataset: %d".format(data2.count()));
 		sc.stop()
