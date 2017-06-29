@@ -17,8 +17,8 @@ object AIStest
 		val data = sc.textFile(tfiles);
 		val data1 = data.map(_.split(","));
 		val data2 = data1.filter(x => x(0)!="244670084");
-		//data2.map(_.mkString(",")).saveAsTextFile("~/Yiannis/route1")
-		println ("Lines in dataset: %d".format(data2.count()));
+		data2.map(_.mkString(",")).saveAsTextFile()
+		//println ("Lines in dataset: %d".format(data2.count()));
 		sc.stop()
 	}
 }
