@@ -7,7 +7,7 @@ object AIStest
 {
 	def main(args: Array[String])
 	{
-		val tfiles = "/Users/tsali/Documents/AIS/data" //+ args(0)
+		val tfiles = "hdfs://namenode.ib.sandbox.ichec.ie:8020/" + args(0)
 
 		val conf = new SparkConf()
 		conf.setAppName("AIS-test")
