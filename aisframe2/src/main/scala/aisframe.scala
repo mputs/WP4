@@ -57,7 +57,7 @@ object AISframe
 	//for each most frequent mmsi-imo pair, the validity of the imo is checked
        // val filt_max_mmsi = max_mmsi.filter(y=>checkimo(y._2(0).toString));
        // filt_max_mmsi.map(a=> Array(a._1,a._2.mkString(",")).mkString(",")).saveAsTextFile(outputfile);
-	//	sc.stop()
+		sc.stop()
 					   
 	}
 }
