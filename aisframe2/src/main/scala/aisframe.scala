@@ -41,18 +41,21 @@ object AISframe
 	//Only the first 2 colums (mmsi and imo) are selected and turned into a map
 	//val imommsi = data.map(x => Array(x(0),x(1)));
 	val imommsi = data.map(x => Array(x(0),x(1),x(2),x(11)));	
-		
+	val koppel = imommsi.map(z => (z.mkString(","), 1)).reduceByKey(_+_);
+	val koppel2 = koppel.map(b => b._1.split(",")++Array(b._2)).map(c=>(c(0),c.slice(1,5)));
+	val max_mmsi = koppel2.reduceByKey((b, c)=> if(b(3).toString.toInt>c(3).toString.toInt) b else c).cache;
+	val tot = max_mmsi.map(a=> Array(a._1,a._2.mkString(",")).mkString(",")).saveAsTextFile(outputfile);
 
 	//These couples are made into a string and for each line a "1" is added.  
 	//Then all couples are aggregated on mmsi-imo couple and number of couples
-        val koppel = imommsi.map(z => (z.mkString(","), 1)).reduceByKey(_+_);
+        //val koppel = imommsi.map(z => (z.mkString(","), 1)).reduceByKey(_+_);
 	
 	//the mmsi-imo couple is broken and imo and number of couples are coupled 
-        val koppel2 = koppel.map(b => b._1.split(",")++Array(b._2)).map(c=>(c(0),c.slice(1,4)));
+        //val koppel2 = koppel.map(b => b._1.split(",")++Array(b._2)).map(c=>(c(0),c.slice(1,4)));
 	
 	//on the basis of key(mmsi), value (imo-count) pair the largest value (count) is chosen 
 	//by comparing the first line with the second and so on..
-        val max_mmsi = koppel2.reduceByKey((b, c)=> if(b(4).toString.toInt>c(4.toString.toInt) b else c).saveAsTextFile(outputfile);
+        //val max_mmsi = koppel2.reduceByKey((b, c)=> if(b(4).toString.toInt>c(4.toString.toInt) b else c).saveAsTextFile(outputfile);
 	
 	//for each most frequent mmsi-imo pair, the validity of the imo is checked
        // val filt_max_mmsi = max_mmsi.filter(y=>checkimo(y._2(0).toString));
