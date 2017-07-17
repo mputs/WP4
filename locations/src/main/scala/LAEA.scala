@@ -89,7 +89,7 @@ object LAEA
 
 		def Project ( latlon: Location): Tuple2[Double, Double] = 
 		{
-			Project(latlon[0], latlon[1]);
+			Project(latlon(0), latlon(1));
 		}
 
 		
