@@ -11,6 +11,9 @@ object countuniq
 	val se = new Location(21.854758, 62.174983)
 //	val grid = new LatLonGrid(nw, se, 100);
 
+
+	def tuple2toList[T](t: Tuple2[T,T]):List[T] = List(t._1, t._2)
+
 	def parsetimestamp(x: String):String = 
 	{
 		val dt = x.split(" ");
@@ -33,8 +36,9 @@ object countuniq
 			.map(_.split(","))
 			.filter(x=> x(0)!="mmsi")
 		val q = data.mapPartitions{it =>
-				val grid = new LatLonGrid(nw,se,10000);
-				it.map(x=>grid.getlatidx(x(2).toDouble)+","+grid.getlonidx(x(1).toDouble)+","+parsetimestamp(x(8))+";"+x(0))
+				val grid = new LatLonGrid(nw,se,200);
+				// it.map(x=>grid.getlatidx(x(2).toDouble)+","+grid.getlonidx(x(1).toDouble)+","+parsetimestamp(x(8))+";"+x(0))
+				it.map(x=>tuple2toList(grid.getlatlonidx(x(2).toDouble, x(1).toDouble)).mkString(",")+","+parsetimestamp(x(8))+";"+x(0))
 			}
 			.distinct()
 			.map(_.split(","))
