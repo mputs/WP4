@@ -128,7 +128,7 @@ object LAEA
 		def getlatlonmid(lat: Double, lon: Double): Tuple2[Int,Int,Double, Double] = 
 		{
 			val (xi, yi) = getlatlonidx(lat,lon);
-			if(xi==-1 || yi==-1) 
+			if(xi == -1 || yi == -1) 
 				return (xi, yi, -999.0,-999.0)
 			else
 			{
