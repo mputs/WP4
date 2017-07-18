@@ -1,4 +1,4 @@
-import scala.math.{Pi, sqrt, sin, cos, asin, atan}
+import scala.math.{Pi, sqrt, sin, cos, asin, atan, max, min}
 
 object LAEA
 {
@@ -103,18 +103,24 @@ object LAEA
 	{
 		val laea = new LAEATransformer();
 
+
 		val (x1,y1) = laea.Project(nw);
 		val (x2,y2) = laea.Project(se);
-
-
-		val dx = (x2-x1)/gridsize;
-		val dy = (y2-y1)/gridsize;
+		
+		
+		val xmin = min(x1,x2);
+		val xmax = max(x1,x2);
+		val ymin = min(y1,y2);
+		val ymax = max(y1,y2);
+		
+		val dx = (xmax-xmin)/gridsize;
+		val dy = (ymax-ymin)/gridsize;
 
 		def getlatlonidx(lat: Double, lon: Double): Tuple2[Int,Int] = 
 		{
 			val (xi,yi)  = laea.Project(lat,lon);
-			if (xi > x1 && xi < x2 && yi > y1 && yi > y2)
-				return (((xi-x1)/dx).toInt, ((yi-y1)/dy).toInt);
+			if (xi > xmin && xi < xmax && yi > ymin && yi > ymax)
+				return (((xi-xmin)/dx).toInt, ((yi-ymin)/dy).toInt);
 			else
 				return (-1,-1)
 		}
