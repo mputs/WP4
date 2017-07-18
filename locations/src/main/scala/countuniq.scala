@@ -18,7 +18,7 @@ object countuniq
 	{
 		val dt = x.split(" ");
 		val t = dt(1).split(":");
-		return dt(0) + ","+t(0);
+		return dt(0); // + ","+t(0);
 	}
 
 	def main(args: Array[String])
