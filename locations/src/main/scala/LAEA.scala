@@ -131,9 +131,10 @@ object LAEA
 			if(xi==-1 || yi==-1) 
 				return (xi, yi, -999.0,-999.0)
 			else
+			{
 				val (clat, clon) = laea.Inverse(xmin+dx*(xi+0.5), ymin+dy*(yi+0.5));
 				return (xi, yi, clat, clon);
-			
+			}
 		}
 	}
 }
