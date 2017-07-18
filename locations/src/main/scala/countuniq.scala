@@ -38,7 +38,7 @@ object countuniq
 		val q = data.mapPartitions{it =>
 				val grid = new LAEAGrid(nw,se,200);
 				// it.map(x=>grid.getlatidx(x(2).toDouble)+","+grid.getlonidx(x(1).toDouble)+","+parsetimestamp(x(8))+";"+x(0))
-				it.map(x=>tuple2toList(grid.getlatlonidx(x(2).toDouble, x(1).toDouble)).mkString(",")+","+parsetimestamp(x(8))+";"+x(0))
+				it.map(x=>tuple2toList(grid.getlatlonmid(x(2).toDouble, x(1).toDouble)).mkString(",")+","+parsetimestamp(x(8))+";"+x(0))
 			}
 			.distinct()
 			.map(_.split(","))

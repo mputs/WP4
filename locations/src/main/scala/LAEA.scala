@@ -125,7 +125,7 @@ object LAEA
 				return (-1,-1)
 		}
 
-		def getlatlonmid(lat: Double, lon: Double): Tuple4[Int,Int,Double, Double] = 
+		def getlatlonmid(lat: Double, lon: Double): Tuple2[Double, Double] = 
 		{
 			val (xi, yi) = getlatlonidx(lat,lon);
 			if(xi == -1 || yi == -1) 
@@ -133,7 +133,7 @@ object LAEA
 			else
 			{
 				val (clat, clon) = laea.Inverse(xmin+dx*(xi+0.5), ymin+dy*(yi+0.5));
-				return (xi, yi, clat, clon);
+				return (clat, clon);
 			}
 		}
 	}
