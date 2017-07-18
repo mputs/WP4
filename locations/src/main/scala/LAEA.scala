@@ -58,8 +58,10 @@ object LAEA
 		//lon_orig (lambda0) = 0;  
 
 
-		def Project ( lat: Double, lon: Double ):Tuple2[Double, Double] = 
+		def Project ( latdeg: Double, londeg: Double ):Tuple2[Double, Double] = 
 		{
+			val lat = Pi*latdeg/180.0;
+			val lon = Pi*londeg/180.0;
 			val k:Double = sqrt(2.0/(1.0+sin(lat_orig)*sin(lat) + cos(lat_orig)*cos(lat)*cos(lon-lon_orig)));
 			val x:Double = k * cos(lat)*sin(lon-lon_orig);
 			val y:Double = k * (cos(lat_orig)*sin(lat) -sin(lat_orig)*cos(lat)*cos(lon-lon_orig));
@@ -79,7 +81,7 @@ object LAEA
 			
 			val lat = asin(cos(c)*sin(lat_orig)+y*sin(c)*cos(lat_orig)/rho);
 			val lon = lon_orig + atan(x*sin(c) / (rho*cos(lat_orig)*cos(c)-y*sin(lat_orig)*sin(c)));
-			return (lat,lon)
+			return (180*lat/Pi,180*lon/Pi)
 			
 		}
 		def Inverse ( xy: Tuple2[Double, Double] ): Tuple2[Double, Double] = 
@@ -97,7 +99,7 @@ object LAEA
 
 	}
 	
-	class LEAEGrid (nw: Location, se: Location, gridsize: Int)
+	class LAEAGrid (nw: Location, se: Location, gridsize: Int)
 	{
 		val laea = new LAEATransformer();
 

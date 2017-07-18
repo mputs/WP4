@@ -2,7 +2,7 @@
 import org.apache.spark.SparkContext
 import org.apache.spark.SparkContext._
 import org.apache.spark.SparkConf
-import latlon._
+import LAEA._
 
 // mmsi,lon,lat,accuracy,speed,course,rotation,status,timestamp
 object countuniq
@@ -36,7 +36,7 @@ object countuniq
 			.map(_.split(","))
 			.filter(x=> x(0)!="mmsi")
 		val q = data.mapPartitions{it =>
-				val grid = new LatLonGrid(nw,se,200);
+				val grid = new LAEAGrid(nw,se,200);
 				// it.map(x=>grid.getlatidx(x(2).toDouble)+","+grid.getlonidx(x(1).toDouble)+","+parsetimestamp(x(8))+";"+x(0))
 				it.map(x=>tuple2toList(grid.getlatlonidx(x(2).toDouble, x(1).toDouble)).mkString(",")+","+parsetimestamp(x(8))+";"+x(0))
 			}
