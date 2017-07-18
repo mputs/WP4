@@ -129,7 +129,7 @@ object LAEA
 		{
 			val (xi, yi) = getlatlonidx(lat,lon);
 			if(xi == -1 || yi == -1) 
-				return (xi, yi, -999.0,-999.0)
+				return (-999.0,-999.0)
 			else
 			{
 				val (clat, clon) = laea.Inverse(xmin+dx*(xi+0.5), ymin+dy*(yi+0.5));
