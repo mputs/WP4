@@ -104,6 +104,12 @@ object LAEA
 		val laea = new LAEATransformer();
 
 
+		val latmin = min (nw(0), se(0));
+		val latmax = max (nw(0), se(0));
+
+		val lonmin = min (nw(1), se(1));
+		val lonmax = max (nw(1), se(1));
+
 		val (x1,y1) = laea.Project(nw);
 		val (x2,y2) = laea.Project(se);
 		
@@ -118,11 +124,15 @@ object LAEA
 
 		def getlatlonidx(lat: Double, lon: Double): Tuple2[Int,Int] = 
 		{
-			val (xi,yi)  = laea.Project(lat,lon);
-			if (xi > xmin && xi < xmax && yi > ymin && yi > ymax)
-				return (((xi-xmin)/dx).toInt, ((yi-ymin)/dy).toInt);
+
+			if (lat > latmin && lat < latmax && lon > lonmin && lon > lonmax)
+			{
+				val (xi,yi)  = laea.Project(lat,lon);
+			}
 			else
+			{
 				return (-1,-1)
+			}
 		}
 
 		def getlatlonmid(lat: Double, lon: Double): Tuple2[Double, Double] = 
