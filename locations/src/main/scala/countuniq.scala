@@ -42,7 +42,7 @@ object countuniq
 			}
 			.distinct()
 			.map(_.split(","))
-			.filter(x=>x(0).toDouble > -900&& x(1).toDouble > -900)
+			.filter(x=>x(0).toDouble > -900 && x(1).toDouble > -900)
 			.map(_.mkString(","))
 			.map(x=>(x.split(";")(0),1))
 			.reduceByKey(_+_)
