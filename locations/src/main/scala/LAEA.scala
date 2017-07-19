@@ -128,7 +128,7 @@ object LAEA
 			if (lat > latmin && lat < latmax && lon > lonmin && lon > lonmax)
 			{
 				val (xi,yi)  = laea.Project(lat,lon);
-				return (xi, yi);
+				return (((xi-xmin)/dx).toInt, ((yi-ymin)/dy).toInt);
 			}
 			else
 			{
