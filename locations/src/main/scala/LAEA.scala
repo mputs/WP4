@@ -125,7 +125,7 @@ object LAEA
 		def getlatlonidx(lat: Double, lon: Double): Tuple2[Int,Int] = 
 		{
 
-			if (lat > latmin && lat < latmax && lon > lonmin && lon > lonmax)
+			if (lat > latmin && lat < latmax && lon > lonmin && lon < lonmax)
 			{
 				val (xi,yi)  = laea.Project(lat,lon);
 				return (((xi-xmin)/dx).toInt, ((yi-ymin)/dy).toInt);
