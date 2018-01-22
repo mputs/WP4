@@ -29,11 +29,10 @@ object readLuxSpace
 
 	def main(args: Array[String])
 	{
-		//val tfiles = "hdfs://namenode.ib.sandbox.ichec.ie:8020/" + args(0)
-		val tfiles = args(0);
+		val tfiles = "hdfs://namenode.ib.sandbox.ichec.ie:8020/" + args(0)
 		val conf = new SparkConf()
-		conf.setAppName("AIS-test")
-		//conf.setMaster("yarn-client")
+		conf.setAppName("readLuxSpace")
+		conf.setMaster("yarn-client")
 		val sc = new SparkContext(conf)
 
 		val input = sc.textFile(tfiles).filter(x=>x.length!=0);
