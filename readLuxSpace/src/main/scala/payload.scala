@@ -162,5 +162,29 @@ object PayLoad
 			getDouble(b.slice(294,302),10),
 			getString(b.slice(302,422)),
 			getInt(b.slice(422,423)))
+	case class msg18 (
+		tpe: Int, 
+		rpt: Int, 
+		MMSI: Int, 
+		SOG: Double,
+		accuracy: Int,
+		Lon: Double,
+		Lat: Double,
+		COG: Double,
+		HDG: Int,
+		TimeStamp: Int
+	)
+	def to18(b: String):msg18=  
+		msg18(
+			getInt(b.slice(0,6)),
+			getInt(b.slice(6,8)),
+			getInt(b.slice(8,38)),
+			getInt(b.slice(46,56)),
+			getInt(b.slice(56,57)),
+			getDouble(b.slice(57,85),600000),
+			getDouble(b.slice(85,112), 600000),
+			getDouble(b.slice(112,124), 10),
+			getInt(b.slice(112,121)),
+			getInt(b.slice(121,127)) )
 }
 
