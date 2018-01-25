@@ -25,23 +25,23 @@ object countuniq
 	{
 		val hdfsprefix = "hdfs://namenode.ib.sandbox.ichec.ie:8020/" 
 		val tfiles = hdfsprefix + args(0)
-		val seaships = hdfsprefix + args(1)
-		val outputfile = hdfsprefix + args(2)
+	//	val seaships = hdfsprefix + args(1)
+		val outputfile = hdfsprefix + args(1)
 
 		val conf = new SparkConf()
 		conf.setAppName("speedcells")
 		conf.setMaster("yarn-client")
 		val sc = new SparkContext(conf)
 
-		val seashiplist = sc.textFile(seaships).map(_.split(",")).map(x => (x(0), x(2).mkString(",")))
+	//	val seashiplist = sc.textFile(seaships).map(_.split(",")).map(x => (x(0), x(2).mkString(",")))
 
 
 		val data = sc.textFile(tfiles)
 			.map(_.split(","))
 			.filter(x=> x(0)!="mmsi")
-			.map(x=> (x(0),x))
-			.join(seashiplist)
-			.map(x => x._2._1)
+			//.map(x=> (x(0),x))
+			//.join(seashiplist)
+			//.map(x => x._2._1)
 		val q = data.mapPartitions{it =>
 				val grid = new LAEAGrid(nw,se,200);
 				// it.map(x=>grid.getlatidx(x(2).toDouble)+","+grid.getlonidx(x(1).toDouble)+","+parsetimestamp(x(8))+";"+x(0))
