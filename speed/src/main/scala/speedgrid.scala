@@ -25,7 +25,6 @@ object countuniq
 	{
 		val hdfsprefix = "hdfs://namenode.ib.sandbox.ichec.ie:8020/" 
 		val tfiles = hdfsprefix + args(0)
-	//	val seaships = hdfsprefix + args(1)
 		val outputfile = hdfsprefix + args(1)
 
 		val conf = new SparkConf()
@@ -33,26 +32,21 @@ object countuniq
 		conf.setMaster("yarn-client")
 		val sc = new SparkContext(conf)
 
-	//	val seashiplist = sc.textFile(seaships).map(_.split(",")).map(x => (x(0), x(2).mkString(",")))
 
 
 		val data = sc.textFile(tfiles)
 			.map(_.split(","))
 			.filter(x=> x(0)!="mmsi")
-			//.map(x=> (x(0),x))
-			//.join(seashiplist)
-			//.map(x => x._2._1)
 		val q = data.mapPartitions{it =>
 				val grid = new LAEAGrid(nw,se,200);
-				// it.map(x=>grid.getlatidx(x(2).toDouble)+","+grid.getlonidx(x(1).toDouble)+","+parsetimestamp(x(8))+";"+x(0))
-				it.map(x=>(tuple2toList(grid.getlatlonmid(x(2).toDouble, x(1).toDouble)).mkString(",")+","+parsetimestamp(x(8))+";"+x(0),List(1.0/(x(5).toDouble),1.0)))
+				it.map(x=>(tuple2toList(grid.getlatlonmid(x(2).toDouble, x(1).toDouble)).mkString(",")+","+parsetimestamp(x(8))+";"+x(0),List(1.0/(x(4).toDouble/10),1.0, x(4).toDouble/10)))
 			}
-			.reduceByKey((x,y)=>List(x(0)+y(0),x(1)+y(1)))
-			.map(x=>(x._1.split(";")(0).split(","),(x._2(1)/x._2(0),1.0)))
+			.reduceByKey((x,y)=>List(x(0)+y(0),x(1)+y(1), x(2) max y(2)))
+			.map(x=>(x._1.split(";")(0).split(","),(x._2(1)/x._2(0),1.0, x._2(2))))
 			.filter(x=>x._1(0).toDouble > -900 && x._1(1).toDouble > -900)
 			.map(x=>(x._1.mkString(","),x._2))
-			.reduceByKey((x,y)=>(x._1+y._1, x._2+y._2))
-			.map(x=>x._1+","+(x._2._1/x._2._2).toString)
+			.reduceByKey((x,y)=>(x._1+y._1, x._2+y._2, x._3 max y._3))
+			.map(x=>x._1+","+(x._2._1/x._2._2).toString+","+x._2._3.toString)
 		println (">>>>>>> count is "+q.count() + "<<<<<<<")
 
 		q.saveAsTextFile(outputfile);
